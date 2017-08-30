@@ -5,7 +5,7 @@ categories: 笔记
 ---
 * content
 {:toc}
-《Linux内核设计与实现》读书笔记"
+《Linux内核设计与实现》读书笔记
 
 
 
