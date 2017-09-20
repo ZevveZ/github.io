@@ -33,8 +33,9 @@ mkinitrd -o /boot/initrd.img-2.6.10 2.6.10
 ```
 - 终于可以开心地编写内核模块了，但是我发现装载模块之后无法卸载模块，提示"Device busy"?  
 将初始化函数的返回值设置为0即可，之前没有设置返回值
-- 我照着书上在Makefile中只写了`obj-m:=hello.o`，但是使用书上的命令`make -C ~/linux-2.6.10 M =\`pwd\` modules`却不能成功编译模块?  
+- 我照着书上在Makefile中只写了`obj-m:=hello.o`，但是使用书上的命令``make -C ~/linux-2.6.10 M =`pwd` modules``却不能成功编译模块?  
 原来我在make命令中M和=号之间多了一个空格，导致不能成功编译模块，去掉空格之后就正常了
+- 一定要注意在编译完内核之后不能通过`make distclean`清除编译产生的文件，否则会编译不了模块，应该通过`make clean`
 
 # 参考资料
 - [ldd3学习笔记--环境搭建(构建linux2.6.10源码树)](http://blog.csdn.net/u013162593/article/details/45252383)
