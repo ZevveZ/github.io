@@ -20,7 +20,8 @@ categories: 日记
 - 之前我在Ubuntu17.04上编译过内核没能成功，原因是我的编译工具版本不对，这回在Ubuntu5.04下一切就比较顺利了，主要过程如下,等对编译内核有进一步了解后再详细说明这个过程：
 ```
 cd linux-2.6.10
-make defconfig	//这里要注意编辑根目录下的.config,将CONFIG_MODULES_UNLOAD设置为y，允许内核卸载模块
+make defconfig
+//修改根目录下的.config,修改CONFIG_MODULES_UNLOAD=y，允许内核卸载模块；修改CONFIG_CIFS=y,因为主机与虚拟机之间通过samba共享文件；按照ubuntu5.04里面的设置修改千兆以太网，这样虚拟机才能够识别以太网
 make
 make bzImage
 make modules
