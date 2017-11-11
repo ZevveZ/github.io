@@ -96,7 +96,7 @@ categories: 笔记
 	- 避免TOCTTOU错误：如果有两个基于文件的调用，其中第二个调用依赖于第一个调用的结果，因为两个调用之间不是原子的，在两个调用之间文件可能发生了改变，导致程序最终的结果是错误的
     - 文件名和路径名的截断：若\_POSIX\_NO\_TRUNC有效，则在整个路径名超过PATH\_MAX或路径名中的任意文件名超过NAME\_MAX时出错返回，并将errno设置为ENAMETOOLONG
 - 函数creat
-    - 相当于open(path, O\_WRONLY|O\_CREAT|O\_TRUNC, mode)
+    - 相当于`open(path, O_WRONLY|O_CREAT|O_TRUNC, mode)`
     - 因为早期的UNIX版本open并不能创建文件，所以才有这个函数
 - 函数close
     - 关闭一个文件时还会释放该进程加在文件上的记录锁
@@ -310,6 +310,8 @@ categories: 笔记
         - 这两个函数组合了open、read、close操作，buf中不包含null字节
 - 文件时间
     - 每个文件维护三个时间字段
+    - 系统不维护对一个inode的最后访问时间
+    - 图4\-20列出了各种函数对三个时间的影响
 
 字段|说明|例子|ls
 -|-|-|-
@@ -317,8 +319,6 @@ st\_atim|文件数据最后访问时间|read|-u
 st\_mtim|文件数据最后修改时间|write|默认
 st\_ctim|inode状态的最后更改时间|chmod、chown|-c
 
-    - 系统不维护对一个inode的最后访问时间
-    - 图4\-20列出了各种函数对三个时间的影响
 - 函数futimens、utimensat和uitmes
     - `int futimens(int fd, const struct timespec times[2])`
     - `int utimensat(int fd, const char *path, const struct timespec times[2], int flag)`
@@ -1167,8 +1167,3 @@ abort|pthread\_cancel|请求控制流的非正常退出
 	    - 如果当前就位的线程数量为满足条件，那么进入休眠状态；如果当前线程是最慢的一个，那么会唤醒所有休眠的线程
 	    - 对一个任一线程，该函数返回`PTHREAD_BARRIER_SERIAL_THREAD`,可以将其作为主线程，其他线程得到的返回值为0
 	    - 每次达到屏障计数值后可以重用屏障；但是如果要修改计数值，需要先调用destroy函数，再调用init函数
-
-# 第十二章 线程控制
-- 线程限制
-    - 
-
