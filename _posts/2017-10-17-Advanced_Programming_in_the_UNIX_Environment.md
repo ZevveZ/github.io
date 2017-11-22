@@ -1,4 +1,4 @@
-#---
+---
 layout: post
 title: "《UNIX环境高级编程》读书笔记"
 categories: 笔记
@@ -12,9 +12,9 @@ categories: 笔记
 
 
 # 第一章 UNIX基础知识
-- shell：命令行解释器，是一个特殊的应用程序，为运行其他的应用程序提供接口
+- shell:命令行解释器，是一个特殊的应用程序，为运行其他的应用程序提供接口
 - 只有'/'和' '
-- 不带缓冲的I/O：open、read、write、lseek和close，这些函数都使用文件描述符
+- 不带缓冲的I/O:open、read、write、lseek和close，这些函数都使用文件描述符
 - 标准I/O函数为那些不带缓冲的I/O函数提供了一个带缓冲的接口,这样我们就不必担心最佳缓冲区的大小
 - 使用long保存getpid的返回值可以提高可移植性
 - fgets返回的每一行都是以换行符结束的
@@ -26,10 +26,10 @@ categories: 笔记
     - 如果没有出错，其值不会被清除。因此只有在函数返回值指明出错时才检查其值
     - 任何函数都不会将errno的值置为0
 - `char *strerror(int errnum)`:返回errnum对应的错误信息
-- `void perror(char *msg)`:在标准错误上输出：msg+冒号+空格+错误信息+换行
+- `void perror(char *msg)`:在标准错误上输出:msg+冒号+空格+错误信息+换行
 - 出错恢复
-    - 致命性错误：记录日志然后退出，什么也恢复不了
-    - 非致命性错误：与资源相关时，典型的操作是等待一段时间重试
+    - 致命性错误:记录日志然后退出，什么也恢复不了
+    - 非致命性错误:与资源相关时，典型的操作是等待一段时间重试
 - 信号用于通知进程发生了某种情况
     - 处理信号的方式
         - 忽略信号,不推荐使用这种方式
@@ -41,19 +41,19 @@ categories: 笔记
 - 时间值
     - 日历时间使用的是UTC，进程时间使用的是时钟滴答
     - 为一个进程维护了三个时间值
-        - 时钟时间：进程运行的时间总量
-	- 用户CPU时间：执行用户指令的时间总量
-	- 系统CPU时间：执行系统调用的时间总量
+        - 时钟时间:进程运行的时间总量
+	- 用户CPU时间:执行用户指令的时间总量
+	- 系统CPU时间:执行系统调用的时间总量
     - 在shell中通过time命令可以度量进程的三个时间值
 - 系统调用和库函数
     - UNIX为每个系统调用在libc中设置一个具有同样名字的函数
 
 # 第二章 UNIX标准及实现
 - ANSI是ISO中代表美国的成员，ANSI89被采纳为ISO90
-- ISO C：定义C程序设计语言的语法和语义，还定义了其标准库
-- IEEE POSIX：规范可移植操作系统接口，并不区分系统调用和库函数，包含了ISO C
+- ISO C:定义C程序设计语言的语法和语义，还定义了其标准库
+- IEEE POSIX:规范可移植操作系统接口，并不区分系统调用和库函数，包含了ISO C
 - Single UNIX Specification(SUS):可以看成是POSIX.1的超集，定义了遵循XSI实现必须支持POSIX.1的可选部分，只有遵循了XSI实现才能称为UNIX系统
-- UNIX移植的限制：编译时限制、运行时限制
+- UNIX移植的限制:编译时限制、运行时限制
     - 编译时限制通过头文件解决 
     - 与文件或目录无关的限制通过sysconf函数
     - 与文件或目录有关的限制通过pathconf和fpathconf函数
@@ -67,7 +67,7 @@ categories: 笔记
     - 如果name参数不是一个合法的变量，3个函数都会返回-1，并把errno置为EINVAL
     - 有些name会返回一个变量值(>=0)或者提示该值是不确定的。不确定的值通过返回-1来体现而不改变errno的值
     - 以\_SC开头的name参数适用于sysconf，以\_PC开头的name参数适用与pathconf和fpathconf
-- 不确定运行时限制的解决思路：先假定一个值然后根据具体的使用场景进行处理
+- 不确定运行时限制的解决思路:先假定一个值然后根据具体的使用场景进行处理
 - 判断是否支持POSIX.1的可选选项
     - 编译时选项定义在unistd.h中
     - 与文件或目录无关的运行时选项用sysconf
@@ -76,9 +76,9 @@ categories: 笔记
     - 如果符号常量没有定义或者定义为-1，那么平台不支持该选项
     - 如果符号常量定义为大于0，那么平台支持该选项
     - 如果符号常量定义为0，那么需要调用sysconf、pathconf和fpathconf来判断是否支持该选项，如果这些调用返回-1则表示不支持该选项
-- 功能测试宏：在POSIX.1和XSI实现的头文件中加入了很多非标准的定义，通过定义\_POSIX\_C\_SOURCE和\_XOPEN\_SOURCE功能测试宏来排除任何实现专有的定义
-- 基本系统数据类型：使用这些类型就不再需要考虑因为系统不同而带来的变化，如size\_t
-- 标准之间的冲突：ISO C的clock()和POSIX.1的times()的返回值单位不同；ISO C的函数没有像POSIX.1那么严格，所以POSIX.1要求某些函数有不同的实现
+- 功能测试宏:在POSIX.1和XSI实现的头文件中加入了很多非标准的定义，通过定义\_POSIX\_C\_SOURCE和\_XOPEN\_SOURCE功能测试宏来排除任何实现专有的定义
+- 基本系统数据类型:使用这些类型就不再需要考虑因为系统不同而带来的变化，如size\_t
+- 标准之间的冲突:ISO C的clock()和POSIX.1的times()的返回值单位不同；ISO C的函数没有像POSIX.1那么严格，所以POSIX.1要求某些函数有不同的实现
 
 # 第三章 文件I/O
 - 不带缓冲的I/O指的是read和write都只是调用内核中的一个系统调用,这些I/O函数都不是ISO C的一部分，但是POSIX.1和SUS的组成部分
@@ -93,10 +93,10 @@ categories: 笔记
 	- 如果path参数制定的是相对路径，并且此时fd参数是AT\_FDCWD特殊值，那么相对路径从当前的工作目录开始
     - openat函数解决的问题
         - 让不同的线程很方便地拥有不同的工作目录
-	- 避免TOCTTOU错误：如果有两个基于文件的调用，其中第二个调用依赖于第一个调用的结果，因为两个调用之间不是原子的，在两个调用之间文件可能发生了改变，导致程序最终的结果是错误的
-    - 文件名和路径名的截断：若\_POSIX\_NO\_TRUNC有效，则在整个路径名超过PATH\_MAX或路径名中的任意文件名超过NAME\_MAX时出错返回，并将errno设置为ENAMETOOLONG
+	- 避免TOCTTOU错误:如果有两个基于文件的调用，其中第二个调用依赖于第一个调用的结果，因为两个调用之间不是原子的，在两个调用之间文件可能发生了改变，导致程序最终的结果是错误的
+    - 文件名和路径名的截断:若\_POSIX\_NO\_TRUNC有效，则在整个路径名超过PATH\_MAX或路径名中的任意文件名超过NAME\_MAX时出错返回，并将errno设置为ENAMETOOLONG
 - 函数creat
-    - 相当于open(path, O\_WRONLY|O\_CREAT|O\_TRUNC, mode)
+    - 相当于`open(path, O_WRONLY|O_CREAT|O_TRUNC, mode)`
     - 因为早期的UNIX版本open并不能创建文件，所以才有这个函数
 - 函数close
     - 关闭一个文件时还会释放该进程加在文件上的记录锁
@@ -110,6 +110,14 @@ categories: 笔记
     - off\_t支持32bit和64bit，可以通过getconf指定c99使用的标志
 - 函数read
     - 返回实际读取到的字节数，如果到文件尾返回0；读取失败返回-1
+    - 不会自动加null
+    - 以下情况会导致实际读取到的字节数少于要求读的字节数
+	- 读终端设备，通常一次最多读取一行
+	- 读取某些面向记录的设备时，一次最多返回一条记录
+	- 由于信号打断造成部分读取就返回了
+        - 读普通文件时剩下的字节数少于要求读的字节数就到文件尾了
+	- 读网络设备时，网络中的缓冲机制可能造成返回值小于所要求的字节数
+	- 读管道或FIFO时，管道中包含的字节数少于所需的数量
 - 函数write
     - 文件偏移量增加实际写的字节数
 - I/O效率
@@ -126,7 +134,7 @@ categories: 笔记
     - 文件描述符标志和文件状态标志的作用范围不同
     - 使用dup和fork时会有多个文件描述符项指向同一个文件项
 - 原子操作:由多步组成的一个操作，如果该操作原子地执行，则要么执行完所有步骤，要么一步也不执行
-    - 追加到一个文件：在open文件时使用O\_APPEND标志，这样每次调用write写文件时就会原子地lseek到文件尾
+    - 追加到一个文件:在open文件时使用O\_APPEND标志，这样每次调用write写文件时就会原子地lseek到文件尾
     - 函数pread和pwrite:允许原子地定位并执行I/O
     - 创建一个文件:在open的flags中加入O\_CREAT和O\_EXCL表示如果文件不存在则创建文件，如果文件存在open调用失败
 - 函数dup和dup2
@@ -138,10 +146,10 @@ categories: 笔记
         - dup2是原子操作，close和fcntl涉及到两个函数
 	- dup2和fcntl有一些不同的error
 - 函数sync、fsync和fdatasync
-    - 内核中的延迟写：当我们向磁盘写入数据时，内核通常先将数据复制到缓冲区，然后排入写队列，晚些时候再写入磁盘
-    - sync：将所有修改过的块缓冲区排入写队列然后返回，并不等待实际写磁盘操作结束
-    - fsync：对指定的文件描述符起作用，等待实际写磁盘操作结束
-    - fdatasync：与fsync类似，但是它只影响文件的数据部分，fsync还会同步更新文件的属性
+    - 内核中的延迟写:当我们向磁盘写入数据时，内核通常先将数据复制到缓冲区，然后排入写队列，晚些时候再写入磁盘
+    - sync:将所有修改过的块缓冲区排入写队列然后返回，并不等待实际写磁盘操作结束
+    - fsync:对指定的文件描述符起作用，等待实际写磁盘操作结束
+    - fdatasync:与fsync类似，但是它只影响文件的数据部分，fsync还会同步更新文件的属性
     - 这三个函数和O\_SYNC同步标志与底层操作系统、文件系统有关
 - 函数fcntl:如果失败所有命令都返回-1，成功则返回其他值
     - 复制一个已有的描述符(F\_DUPFD,F\_DUPFD\_CLOEXEC)
@@ -157,6 +165,214 @@ categories: 笔记
     - /dev/fd主要由shell使用，例如作为命令行参数的"-"表示标准输入或标准输出
 
 # 第四章 文件和目录
+- 函数stat、fstat、fstatat和lstat
+    - `int stat(const char *restrict pathname, struct stat *restrict buf)`
+        - 将pathname对应的文件信息保存在buf中，跟随符号链接指向的文件
+    - `int fstat(int fd, struct stat *restrict buf)`
+        - 将fd对应的文件信息保存在buf中，跟随符号链接指向的文件
+    - `int lstat(const char *restrict pathname, struct stat *restrict buf)`
+        - 与stat函数类似，但不跟随符号链接，返回符号链接自身的信息
+    - `int fstatat(int fd, const char *restrict pathname, struct stat *restrict buf, int flag)`
+        - fd参数指明了pathname的相对目录；如果pathname为绝对路径，那么会忽略掉fd参数；fd取AT\_FDCWD表示当前工作目录
+	- 如果flag包含AT\_SYMLINK\_NOFOLLOW,那么fstatat行为就同lstat，否则默认行为同stat
+- 文件类型
+    - 普通文件(regular file):UNIX不区分文本文件和二进制文件，由处理该文件的应用解释
+    - 目录文件(directory file):包含其他文件的文件名和指向该文件的指针
+    - 字符特殊文件(character special file):提供对设备不带缓冲的访问，每次访问长度可变
+    - 块特殊文件(block special file):提供对设备带缓冲的访问，每次访问以固定长度进行
+    - FIFO:有时又称为命名管道，用于进程间通信
+    - 套接字(socket):用于进程间的网络通信，也可用于同一台宿主机上的非网络通信
+    - 符号链接(symbolic link):用于指向另一个文件
+    - 文件类型的信息包含在struct stat的成员st\_mode中，可以通过提供的宏进行确定文件类型
+- 设置用户ID和设置组ID
+    - 与一个进程相关联的ID
+        - 实际用户ID、实际组ID，标志我们是谁
+	- 有效用户ID、有效组ID、附属组ID，用于权限检查
+	- 保存的设置用户ID、保存的设置组ID，由exec函数保存,保存有效用户ID和有效组ID的副本
+    - 如果程序文件的设置用户ID位或设置组ID位被置位，那么进程的有效用户ID或有效组ID就会变为程序的所有者或组所有者；对应于struct stat中的成员st\_mode
+        - 可用`S_ISUID()`和`S_ISGID()`测试
+- 文件访问权限
+    - 对于目录来说，读权限意味着我们可以获得目录下的文件名列表；执行权限意味着我们可以通过该目录，该权限位也被称为搜索位
+    - 在目录中创建文件、删除文件必须具备该目录的写和执行权限，对文件本身不需要任何权限
+    - 如果用7个exec函数中的任何一个执行文件，都必须对文件具有执行权限，并且该文件必须是普通文件
+    - 进程每次打开、创建或删除一个文件时，内核都会进行文件访问权限测试，具体如下
+        - 主要涉及文件的所有者和所有组，进程的有效用户、有效组和附属组
+	- 若进程的有效用户ID为0(即超级用户),则允许访问
+	- 若进程的有效用户ID等于文件所有者的ID，则测试相应的权限位;否则拒绝访问
+	- 若进程的有效组ID或者任一附属组ID等于文件所有组ID，则测试相应的权限位；否则拒绝访问
+	- 测试other的权限位；否则拒绝访问
+	- 值得注意的是，user、group、other权限只需要检查一种即可
+- 新文件和目录的所有权
+    - 新文件和目录的所有者一定为进程的有效用户
+    - 新文件和目录的所有组可以指定
+        - 如果当前目录的设置组ID位被置位，那么所有组则为当前目录的所有组
+	- 如果没有置位，那么所有组则为进程的有效用户组
+- 函数access和faccessat
+    - 与内核的权限测试不同，这两个函数是以实际用户ID和实际组ID进行权限测试
+    - `int access(const char *pathname, int mode)`
+        - pathname支持绝对路径和相对路径
+    - `int facessat(int fd, const char *pathname, int mode, int flag)`
+        - 与fstatat类似，如果pathname为绝对路径，则忽略掉fd；否则pathname是相对于fd的路径;fd取AT_FDCWD表示当前工作目录
+	- 如果flag包含AT\_EACCESS，那么使用进程的有效用户和有效组进行测试权限
+- 函数umask
+    - `mode_t umask(mode_t cmask)`
+        - umask为进程创建文件模式创建屏蔽字，并返回之前的值
+	- cmask的取值为mode常量:S\_IRUSR,S\_IRWXU等
+	- cmask指定的是拒绝的权限位
+    - 为了确保在open或creat创建文件时指定的权限位生效，必须在程序中指定mask
+    - 子进程设置的mask值不会影响到父进程
+    - 内核产生core文件时有默认的权限位；shell也是如此
+- 函数chmod、fchmod和fchmodat
+    - 为了改变一个文件的权限，当前进程的有效用户ID必须等于文件所有者ID，或者进程具有超级用户权限
+    - `int chmod(const char *pathname, mode_t mode)`
+    - `int fchmod(int fd, mode_t mode)`
+    - `int fchmodat(int fd, const char *pathname, mode_t mode, int flag)`
+    - 更改文件的权限会更新文件的ctime，ls默认列出的时间是mtime
+    - 虽然文件的所有者可以修改文件的权限，但是chmod类函数在下列条件自动清除权限位
+        - 在某些系统上(Linux除外)，只有超级用户才能够设置普通文件的粘着位；如果非超级用户设置，在参数mode中自动清除粘着位
+	- 如果文件的组所有者不是进程的有效用户组或附属组，而且进程没有超级用户权限，那么参数mode中自动清除设置组ID位
+    - 为了防止suid和sgid被滥用，如果不是超级用户或者文件的所有者写一个文件，那么该文件的suid和sgid会自动清除
+- 粘着位
+    - 在历史上用作保存可执行文件的正文部分,因此也就用常量S\_ISVTX来表示
+    - 在现代系统中，粘着位一般用于目录，只有对该目录具有写权限并且满足以下条件之一才能够删除或重命名文件
+        - 拥有此文件
+	- 拥有此目录
+	- 超级用户
+- 函数chown、lchown、fchown和fchownat
+    - `int chown(const char *pathname, uid_t owner, gid_t group)`
+        - follow symbolic link
+    - `int lchown(const chhar *pathname, uid_t owner, gid_t group)`
+        - not follow symbolic link
+    - `int fchown(int fd, uid_t owner, gid_t group)`
+        - follow symbolic link
+    - `int fchownat(int fd, const char *pathname, uid_t owner, gid_t group, int flag)`
+        - flag为AT\_SYMLINK\_NOFOLLOW时...
+	- fd为AT\_FDCWD
+    - 如果owner或group为-1表示不修改对应的所有者
+    - `_POSIX_CHOWN_RESTRICTED`可以通过pathconf或fpathconf
+        - 超级用户的进程想改啥改啥
+	- 非超级用户的进程只有进程的有效用户组或附属组match文件的所有组，才可以将文件的所有组更改为进程的有效用户组或附属组
+	- 非超级用户的进程在修改完文件的权限之后，文件的suid和sgid会被清除
+- 文件长度
+    - struct stat的成员st\_size以字节数表示文件长度
+        - 对于普通文件来说，文件长度具有一般意义
+	- 对于目录文件来说，总是16或512字节的整数倍，表示所有目录项的总大小
+	- 对于符号链接来说，文件长度为目标文件的文件名长度，不包含null
+	- 普通文件的长度可能为0，但是目录文件和符号链接文件的长度不可能为0
+    - 文件中的空洞
+        - 当设置的文件偏移量超过文件的长度，并且写入了数据，就会产生文件空洞
+	- 读文件空洞读到的都是0，文件空洞并不占用实际的磁盘空间，但是会影响文件长度
+	- 使用cat程序拷贝文件时，文件空洞将在新文件中使用0填充，毕竟人家就是read旧文件然后write新文件
+- 文件截断
+    - `int truncate(const char *pathname, off_t length)`
+    - `int ftruncate(int fd, off_t length)`
+    - 如果文件长度超过length，那么从文件末尾开始将文件截断为length；如果文件长度小于length，那么在文件尾端产生空洞，使其长度为length
+    - 在open打开文件时指定O\_TRUNC将文件长度截断为0
+- 文件系统
+    - 有两个目录项指向同一个inode，这种链接称为硬链接；struct stat的成员st\_nlink保存硬链接的计数；POSIX.1使用LINK\_MAX指定硬链接的最大数
+    - 符号链接，该文件保存的内容是目标文件的文件名
+    - 不能创建跨越文件系统的硬链接，因为目录项中的i节点只能指向本文件系统的i节点
+    - 在同一个文件系统中移动或者重命名文件，只需增删相应的目录项，不需要移动文件的内容
+    - 链接计数表示有多少个目录项指向该inode；对于普通文件来说，就是硬链接；对于目录文件来说，至少有两个计数，每拥有一个子目录链接计数加1
+- 函数link、linkat、unlink、unlinkat和remove(硬链接)
+    - `int link(const char *existingpath, const char *newpath)`
+    - `int linkat(int efd, const char *existingpath, int nfd, const char *newpath, int flag)`
+        - 如果existingpath指定的文件是符号链接，当flag为AT\_SYMBOLIC_FOLLOW时，创建符号链接指向的文件的链接，否则创建符号链接的符号链接
+        - 创建新目录项和增加链接计数应当是一个原子操作
+        - 多数文件系统不支持创建目录的硬链接，因为可能会造成循环，大多数实用程序不能处理这种情况
+    - `int unlink(const char *pathname)`
+    - `int unlinkat(int fd, const char *pathname, int flag)`
+        - 这两个函数删除目录项，减少链接计数
+	- 为了删除目录项，必须要具备对该目录的写和执行权限，如果设置了sticky bit，还要满足相应的要求
+	- 当关闭一个文件时，内核首先检查打开该文件的进程数，如果进程数为0，接着检查该文件的链接计数，如果为0才删除文件
+        - 对于unlinkat，如果flag包含AT\_REMOVEDIR，那么可以像rmdir一样删除空目录
+	- tricks:进程通过open或creat创建文件，然后立即调用unlink，这样在进程结束后该文件就自动被删除了
+        - 如果pathname是符号链接，not follow symbolic link
+    - `int remove(const char *pathname)`
+        - 对于文件来说，remove相当与unlink
+	- 对于目录来说，remove相当于rmdir
+	- ISO C规定使用remove，因为大多数系统并不支持文件链接
+- 函数rename和renameat
+    - `int rename(const char *oldname, const char *newname)`
+    - `int renameat(int oldfd, cont char *oldname, int newfd, const char *newname)`
+        - 如果oldname是一个文件，如果newname存在那么一定也要是文件
+	- 如果oldname是一个目录，如果newname存在那么一定也要是目录，并且该目录一定是空目录；newname中不能包含oldname
+	- 这两个函数 not follow symbolic link
+	- 不能够对.和..重命名
+	- 如果oldname和newname对应同一个文件，那么函数直接返回
+- 符号链接
+    - 引入符号链接是为了避免硬链接的一些限制
+        - 硬链接不能跨越文件系统
+	- 一般不能为目录创建硬链接
+    - 当使用以名字引用文件的函数时，要了解函数是否跟随符号链接，图4\-17列出了本章函数的情况
+    - 符号链接和硬链接都有可能引入循环，但是符号链接相对容易消除，因为unlink函数不跟随符号链接，只要unlink文件就可以了；因此link函数不允许创建指向目录的硬链接,因为硬链接循环难消除
+    - 当open打开一个符号链接文件时，如果链接指向的文件不存在，那么open会出错返回
+    - 创建符号链接时不检查链接的文件是否存在，但是硬链接时如果链接文件不存在会出错
+- 创建和读取符号链接
+    - `int symlink(const char *actualpath, const char *sympath)`
+    - `int symlinkat(const char *actualpath, int fd, const char *sympath)`
+        - 如果sympath为绝对路径时，忽略fd；否则sympath是相对于fd
+        - 创建符号链接时，不要求actualpath已经存在
+    - `ssize_t readlink(const char *restrict pathname, char *restrict buf, size_t bufsize)` 
+    - `ssize_t readinkat(int fd, const char *restrict pathname, char *restrict buf, size_t bufsize)`
+        - 这两个函数组合了open、read、close操作，buf中不包含null字节
+- 文件时间
+    - 每个文件维护三个时间字段
+    - 系统不维护对一个inode的最后访问时间
+    - 图4\-20列出了各种函数对三个时间的影响
+
+字段|说明|例子|ls
+-|-|-|-
+st\_atim|文件数据最后访问时间|read|-u
+st\_mtim|文件数据最后修改时间|write|默认
+st\_ctim|inode状态的最后更改时间|chmod、chown|-c
+
+- 函数futimens、utimensat和uitmes
+    - `int futimens(int fd, const struct timespec times[2])`
+    - `int utimensat(int fd, const char *path, const struct timespec times[2], int flag)`
+        - 这两个函数用于修改文件的访问时间和修改时间；times\[0\]表示访问时间，times\[1\]表示修改时间
+	- times参数可以根据需要设置，有4种情况
+	- 根据times参数不同，函数要求不同的权限
+    - `int utimes(const char *pathname, const struct timeval times[2])`
+        - SUS标准定义该函数
+    - 注意utimes类函数不能够更改st\_ctim为一个指定值，因为每次调用完函数后，st\_ctim会自动更新
+    - touch(1)命令调用这些函数
+- 函数mkdir、mkdirat和rmdir
+    - `mkdir(const char *pathname, mode_t mode)`
+    - `mkdirat(int fd, const char *pathname, mode_t mode)`
+        - 注意创建目录时要给予执行权限
+    - `rmdir(const char *pathname)`
+        - 可以删除一个空目录
+	- 如果调用此函数使得目录链接计数为0，如果此时还有进程打开此目录，那么在进程退出之前不会释放目录占用的空间，类似unlink
+- 读目录
+    - 对目录具有读权限就可以读取目录，但是通常只有内核才可以写目录
+    - 目录结构与具体实现有关，POSIX.1包含了一套与目录有关的例程，一般不会通过read手动读取目录内容
+    - `DIR *opendir(const char *pathname)`
+    - `DIR *fdopendir(int fd)`
+    - `struct dirent *readdir(DIR *dp)`
+    - `void rewinddir(DIR *dp)`
+    - `int closedir(DIR *dp)`
+    - `long telldir(DIR *dp)`
+    - `void seekdir(DIR *dp, long loc)`
+    - 各目录的顺序与实现有关，它们通常不按照字母排序
+- 函数chdir、fchdir和getcwd
+    - `int chdir(const char *pathname)`
+    - `int fchdir(int fd)`
+        - 两个函数通过pathname和fd来指定新的工作目录
+	- 因为工作目录是进程的一个属性，所以函数只会改变当前进程的工作目录，因此shell中的cd是内置命令
+	- 跟随符号链接
+    - `char *getcwd(char *buf, size_t size)`
+        - 将当前工作目录路径存放在buf中
+        - size包括null字节
+    - 在更换工作目录前，通过getcwd保存，之后再通过chdir恢复；对于fchdir来说，只需要保存工作目录的文件描述符即可恢复
+- 设备特殊文件
+    - 设备号由主设备号和次设备号组成
+    - st\_dev:文件所在文件系统对应的设备号
+    - st\_rdev:只有字符特殊文件和块特殊文件才有此值，表示实际设备的设备号
+- 文件访问权限位小结
+    - 总共12个权限位
+- 练习
+    - 超级用户通过chroot可以改变进程的根目录，但是一旦修改之后就再也回不来了,但是之前打开的文件描述符仍然有效
 
 # 第五章 标准I/O库
 - 标准I/O库处理很多细节，比如缓冲区的分配，以优化的块长度执行I/O等
@@ -172,11 +388,11 @@ categories: 笔记
     - 在头文件stdio.h中定义了对应于STDIN\_FILENO,STDOUT\_FILENO,STDERR\_FILENO的文件指针
 - 缓冲
     - 标准I/O提供了三种缓冲机制
-        - 全缓冲：在填满I/O缓冲区后才进行实际的I/O操作；缓冲区可由标准I/O自动冲洗(例如在缓冲区满时)也可调用fflush冲洗一个流；对驻留在磁盘上的文件通常使用全缓冲
-	- 行缓冲：当在输入和输出中遇到换行符时，标准I/O库执行I/O操作；当流涉及终端时，通常采用行缓冲
+        - 全缓冲:在填满I/O缓冲区后才进行实际的I/O操作；缓冲区可由标准I/O自动冲洗(例如在缓冲区满时)也可调用fflush冲洗一个流；对驻留在磁盘上的文件通常使用全缓冲
+	- 行缓冲:当在输入和输出中遇到换行符时，标准I/O库执行I/O操作；当流涉及终端时，通常采用行缓冲
 	    - 当行缓冲区满时，即使没有遇到换行符也会进行I/O操作
 	    - 通过标准I/O库从一个行缓冲的流(从内核请求需要数据)请求输入数据，也会冲洗行缓冲区
-	- 不带缓冲：就像直接使用write函数。stderr通常是不带缓冲的
+	- 不带缓冲:就像直接使用write函数。stderr通常是不带缓冲的
     - ISO C要求使用下列的缓冲特征
         - 当且仅当标准输入和标准输出并不指向交互式设备时，它们才是全缓冲的
 	- 标准错误绝不会是全缓冲的
@@ -190,16 +406,16 @@ categories: 笔记
     - fflush强制冲洗一个流，将流所有未写的数据都传送到内核中；当fflush接收NULL时，会导致所有输出流被冲洗；标准没有定义fflush用于输入流的情况
 - 打开流
     - fopen:打开给定路径的文件
-    - freopen：在指定的文件指针上打开给定路径的文件，会关闭原来的文件并清除流定向；通常用于重定向stdin等
-    - fdopen：使用一个已有的文件描述符打开流
-    - 打开流的type参数：r、w、a、r+、w+、a+,每个参数都可以加上b区分是文本文件还是二进制文件，但是UNIX并不区分这两种文件
+    - freopen:在指定的文件指针上打开给定路径的文件，会关闭原来的文件并清除流定向；通常用于重定向stdin等
+    - fdopen:使用一个已有的文件描述符打开流
+    - 打开流的type参数:r、w、a、r+、w+、a+,每个参数都可以加上b区分是文本文件还是二进制文件，但是UNIX并不区分这两种文件
         - fdopen不能截断它为写打开的文件；追加写也不能够创建该文件
         - 如果有多个进程写同一个文件，应该以追加写的方式打开
-	- 当以读写形式打开一个文件时(type中的+号)，有以下的限制：
+	- 当以读写形式打开一个文件时(type中的+号)，有以下的限制:
 	    - 如果中间没有插入fflush、fseek、fsetpos或rewind，那么输出后面不能直接跟随输入
 	    - 如果中间没有插入fseek、fsetpos或rewind，那么输入后面不能直接跟随输出
 	- 在w或a创建一个文件时，无法指定文件的访问权限位
-    - fclose关闭流：在文件被关闭之前，冲洗缓冲中的输出数据，丢弃缓冲中的输入数据。如果标准I/O库为该流自动分配了一个缓冲区，则释放此缓冲区
+    - fclose关闭流:在文件被关闭之前，冲洗缓冲中的输出数据，丢弃缓冲中的输入数据。如果标准I/O库为该流自动分配了一个缓冲区，则释放此缓冲区
         - 当进程正常终止时，所有打开的标准I/O流都被关闭
 - 读和写流
     - 一旦打开了一个流，可在3中不同类型的非格式化I/O中进行选择
@@ -208,32 +424,32 @@ categories: 笔记
 	        - getc、fgetc和getchar
 		- 函数getchar等同于getc(stdin),getc可被实现为宏，fgetc是一个函数
 		- 成功返回下一个字符，不管是出错还是到达文件尾端，这三个函数都是返回EOF，需要通过以下函数检查
-		    - ferror：为真时返回非0
-		    - feof：为真时返回非0
-		    - clearerr：清除两个标志
+		    - ferror:为真时返回非0
+		    - feof:为真时返回非0
+		    - clearerr:清除两个标志
 		- ungetc压送字符回流。读出字符顺序与回送字符顺序相反；ungetc会清除流的文件结束标志；只是写回到流缓冲区中
 	    - 输出函数
 	        - putchar等同于putc(c, stdout)，putc可被实现为宏，fputc是一个函数
 		- 成功返回字符c，出错返回EOF
-	- 每次一行的I/O：使用fgets和fputs
+	- 每次一行的I/O:使用fgets和fputs
 	    - 输入函数
-	        - fgets：必须指定缓冲区长度n，并且返回的缓冲区一定是以null结尾的，意味着如果包括换行符在内的字符串长度超过了n-1，那么下一次还是会继续读取该行
-		- gets：不推荐使用；不保留最后的换行符
+	        - fgets:必须指定缓冲区长度n，并且返回的缓冲区一定是以null结尾的，意味着如果包括换行符在内的字符串长度超过了n-1，那么下一次还是会继续读取该行
+		- gets:不推荐使用；不保留最后的换行符
 		- 成功返回buf指针，不管是出错还是到达文件尾，都是返回NULL，处理方法同getc
 	    - 输出函数
-	        - fputs：将一个以null结尾的字符串输出，必须自己处理换行符
-		- puts：将一个以null结尾的字符串输出到标准输出，会自动输出换行符
+	        - fputs:将一个以null结尾的字符串输出，必须自己处理换行符
+		- puts:将一个以null结尾的字符串输出到标准输出，会自动输出换行符
 		- 成功返回非负值，出错返回EOF
-	- 直接I/O：也称为二进制I/O，读或写某种数量的对象；使用fread和fwrite
+	- 直接I/O:也称为二进制I/O，读或写某种数量的对象；使用fread和fwrite
 - 标准I/O的效率(与不带缓冲区的I/O比较)
     - 系统CPU时间基本相同，这是因为标准I/O库已经为我们考虑好了最佳的缓冲区长度，因此对内核提出的读写请求数基本相同
     - fgets和fputs的速度接近于最优缓冲区长度的read和write
     - fgetc和fputc的速度要比BUFFSIZE=1时的read和write要快很多，两者进行的循环数差不多，当后者进行的系统调用要慢很多
     - stdio并不比直接使用read和write慢很多。对于复杂的应用主要的时间消耗在应用程序的各种处理上，而不是标准I/O例程上
 - 二进制I/O
-    - fread：返回读取的对象数，如果不等于nobj的值，需要通过ferror和feof查看是出错还是到了文件尾
-    - fwrite：返回写入的对象数，如果不等于nobj的值，说明发生了错误
-    - fread和fwrite在不同的环境中可能不能正常工作：
+    - fread:返回读取的对象数，如果不等于nobj的值，需要通过ferror和feof查看是出错还是到了文件尾
+    - fwrite:返回写入的对象数，如果不等于nobj的值，说明发生了错误
+    - fread和fwrite在不同的环境中可能不能正常工作:
         - 对结构体的对齐要求不同
 	- 多字节整数的大小端和浮点数的表示形式
 	-解决方法是使用统一的规范
@@ -241,7 +457,7 @@ categories: 笔记
     - ftell、fseek和rewind
         - 偏移量类型是long
         - 对于二进制文件，文件当前位置是从文件起始位置开始度量，度量单位是字节。ISO C并不要求实现SEEK_END，UNIX支持SEEK_END
-	- 对于文本文件，文件当前位置可能不以简单的字节偏移量来度量。为了定位一个文本文件，whence一定要是SEKK\_SET,而且offset只能有两种取值：0(后退到文件的起始位置)；或是ftell返回的值
+	- 对于文本文件，文件当前位置可能不以简单的字节偏移量来度量。为了定位一个文本文件，whence一定要是SEKK\_SET,而且offset只能有两种取值:0(后退到文件的起始位置)；或是ftell返回的值
 	- rewind可以将一个流设置到起始位置
     - ftello和fseeko
         - 除了偏移量类型是off_t，其余和ftell和fseek相同
@@ -250,22 +466,22 @@ categories: 笔记
 	- 可以通过fgetpos保存当前的位置，使用fsetpos回到保存的位置
 - 格式化I/O
     - 输出
-        - printf：标准输出
-        - fprintf：输出到文件指针
-        - dprintf：输出到文件描述符
-        - sprintf：输出到缓冲区，但是要确保缓冲不要溢出，会在字符串的末尾自动加null，但是不计入返回值
-        - snprintf：可以指定缓冲区大小，追加null，但是不计入返回值
-        - 还有上面五种格式化输出的变体：vprintf等
+        - printf:标准输出
+        - fprintf:输出到文件指针
+        - dprintf:输出到文件描述符
+        - sprintf:输出到缓冲区，但是要确保缓冲不要溢出，会在字符串的末尾自动加null，但是不计入返回值
+        - snprintf:可以指定缓冲区大小，追加null，但是不计入返回值
+        - 还有上面五种格式化输出的变体:vprintf等
     - 输入
         - scanf、fscanf和sscanf
 	- 除了转换说明和空白字符外，格式化字符串中的其他字符必须与输入匹配，若有一个字符不匹配，停止后续处理，不再读入其他部分
 	- vscanf、vfscanf和vsscanf
 - 实现细节
-    - fileno(FILE\*)：获得一个流对应的文件描述符；注意此函数不是ISO C的一部分
+    - fileno(FILE\*):获得一个流对应的文件描述符；注意此函数不是ISO C的一部分
 - 临时文件
     - ISO C标准，但SUSv4已弃用
-        - tmpnam：返回一个临时的路径名；有调用次数限制TMP\_MAX；缓冲区的大小为L\_tmpnam;如果给定一个空的指针作为参数，那么将在静态缓冲区中存放路径名，作为返回值返回，下一次调用会覆盖该静态缓冲区
-        - tmpfile：创建一个临时的二进制文件(wb+)，并返回其文件指针；在关闭文件或者程序结束时会自动删除文件
+        - tmpnam:返回一个临时的路径名；有调用次数限制TMP\_MAX；缓冲区的大小为L\_tmpnam;如果给定一个空的指针作为参数，那么将在静态缓冲区中存放路径名，作为返回值返回，下一次调用会覆盖该静态缓冲区
+        - tmpfile:创建一个临时的二进制文件(wb+)，并返回其文件指针；在关闭文件或者程序结束时会自动删除文件
     - SUSv4支持
         - mkdtemp:创建一个临时目录
 	- mkstemp:与tmpfile不同，创建的临时文件不会自动删除，需要手动unlink
@@ -287,6 +503,85 @@ categories: 笔记
     - 标准I/O库使用了缓冲技术，正是因为它产生了很多问题、引起了许多混淆
 
 # 第六章 系统数据文件和信息
+- 口令文件
+    - 使用nobody用户名可以使任何人登录系统，但是只能访问人人可读写的文件
+    - `struct passwd *getpwuid(uid_t uid)`
+        -函数的返回值是一个静态变量，只要再次调用函数其内容就会被重写
+    - `struct passwd *getpwnam(const char *name)`
+        - 函数的返回值是一个静态变量，只要再次调用函数其内容就会被重写
+    - `struct passwd *getpwent(void)`
+        - 通过多次调用遍历passwd文件
+    - `void setpwent(void)`
+        - open and rewind 文件
+    - `void endpwent(void)`
+        - close getpwent打开的文件
+- 阴影口令
+    - Linux提供了一组函数用来访问阴影口令文件:getspnam,getspent,setspent,endspent
+- 组文件
+    - `struct group *getgrgid(gid_t gid)`
+        -函数的返回值是一个静态变量，只要再次调用函数其内容就会被重写
+    - `struct group *getgrnam(const char *name)`
+        -函数的返回值是一个静态变量，只要再次调用函数其内容就会被重写
+    - `struct group *getgrent(void)`
+    - `struct group *setgrent(void)`
+    - `struct group *endgrent(void)`
+- 附属组ID
+    - 我们不仅可以属于口令文件中的组，而且可以属于另外最多NGROUPS\_MAX个组
+    - 文件访问权限的检查:检查当前进程的有效组和所有附属组
+    - `int getgroups(int gidsetsize, gid_t grouplist[])`
+        - 获取当前进程最多gidsetsize个附属组，实际附属组数目由返回值确定
+	- 当gidsetsize为0时，只是返回附属组数目，以便分配内存
+    - `int setgroups(int ngroups, const gid_t grouplist[])`
+        - need root privilege
+    - `int initgroups(const char *username, gid_t basegid)`
+        - need root privilege
+	- 通常由login程序在用户登录时调用initgroups建立用户的附属组ID表(包括用户的初始用户组)，initgroups函数会通过读取组文件获得用户的附属组，然后调用setgroups进行设置
+- 其他数据文件
+    - get函数:读取下一个记录；如果相应数据文件还未打开，那么会打开该文件；此函数通常返回一个指针，指向一个静态的数据结构，每次调用get都会重写该结构，因此如果需要保存内容，则应该复制它
+    - set函数:打开对应的数据文件并rewind；
+    - end函数:关闭对应的数据文件
+    - 附加的键搜索函数:如果某些数据文件支持搜索，例如getpwnam和getpwuid
+- 登录账户记录
+    - utmp文件记录当前系统登录的各个用户；who命令读取这个文件
+    - wtmp文件跟踪登录和注销事件；last命令读取这个文件
+- 系统标识
+    - `int uname(struct utsname *name)`
+        - 成员数组的最大长度由具体实现确定
+	- 可以使用uname(1)命令打印struct utsname中的信息
+    - `int gethostname(char *name, int namelen)`
+        - 返回主机名，最大的主机名长度为HOST\_NAME\_MAX
+	- 可以使用hostname(1)命令来设置主机名
+- 时间和日期例程
+    - 协调世界时(UTC):规定一天有24小时，一小时有60分钟，一分钟可能有59、60、61秒
+    - UNIX提供的时间是基于UTC时间从公元1970年1月1日00::00::00以来经过的秒数
+    - `time_t time(time_t *calptr)`
+        - 时间值作为函数的返回值；如果参数calptr非空，那么时间值也存放在calptr中
+    - `int clock_gettime(clockid_t clock_id, struct timespec *tsp)`
+        - clock\_id指定获取时间的时钟
+	- struct timespec将时间分为秒和纳秒
+	- 当指定clock\_t为CLOCK\_REALTIME时，函数的功能与time函数类型，但是在支持高精度时间的系统上可以获得比time函数更加精确的时间
+    - `int clock_getres(clockid_t clock_id, struct timespec *tsp)`
+        - 设置参数tsp为指定时钟的resolution(精度)
+    - `int clock_settime(clockid_t clock_id, const struct timespec *tsp)`
+        - 需要适当的权限对特定的时钟设置时间
+    - `int gettimeofday(struct timeval *restrict tp, void *restrict tzp)`
+        - SUSv4指定该函数已经被弃用
+	- struct timeval将时间表示为秒和微秒
+    - `struct tm *gmtime(const time_t *calptr)`
+        - 将时间表示为年月日等的tm结构
+    - `struct tm *localtime(const time_t *calptr)`
+        - 功能同gmtime，但是考虑到本地时区和夏令时
+	- 受环境变量TZ影响
+    - `time_t mktime(struct tm *tmptr)`
+        - 将年月日表示的时间转换为time\_t秒数
+	- 受环境变量TZ影响
+    - `size_t strftime(char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict imptr)`
+	- 受环境变量TZ影响
+    - `size_t strftime_l(char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict imptr, locale_t locale)`
+    - asctime和ctime因为容易受到缓冲区溢出攻击，已经被标记为弃用
+    - `char *strptime(const char *restrict buf, const char *restrict format, struct tm *restrict tmptr)`
+        - 与strftime相反，将buf表示的时间转换为struct tm
+    - 关于各个时间函数之间的关系可以看书的图6\-9
 
 # 第七章 进程环境
 - `int main(int argc, char *argv[]);`
@@ -309,18 +604,18 @@ categories: 笔记
     - 通过环境指针`extern char **environ;`可以查看所有的环境变量
     - 通常使用getenv和putenv来访问特定的环境变量，而不是直接访问environ
 - C程序存储空间布局:占用磁盘空间的只有正文段和初始化数据段，bss段不占用空间
-    - 正文段：机器指令。可共享，只读
-    - 初始化数据段：包含了程序中需要明确赋初值的变量
-    - 未初始化数据段(bss段)：在程序开始执行之前，内核将此段中的数据初始化为0或者空指针
-    - 堆：通常在堆中进行动态存储分配
-    - 栈：存放自动变量以及每次函数调用所需保存的信息
+    - 正文段:机器指令。可共享，只读
+    - 初始化数据段:包含了程序中需要明确赋初值的变量
+    - 未初始化数据段(bss段):在程序开始执行之前，内核将此段中的数据初始化为0或者空指针
+    - 堆:通常在堆中进行动态存储分配
+    - 栈:存放自动变量以及每次函数调用所需保存的信息
 - 共享库
     - 在所有进程都可引用的存储区保存这种库的一个副本，当第一次调用这个库时，通过动态链接的方法将程序与共享库相链接
     - 只需要在内存中保留一份库的副本，节约内存；可以很方便地升级库而不需要修改程序
 - 存储空间的分配
-    - malloc：分配给定字节数的内存，初始值不确定
-    - void \*calloc(size\_t nobj, size\_t size)：为指定数量指定长度的对象分配内存，每个字节初始化为0
-    - realloc：增加或减少以前分配区的长度
+    - malloc:分配给定字节数的内存，初始值不确定
+    - void \*calloc(size\_t nobj, size\_t size):为指定数量指定长度的对象分配内存，每个字节初始化为0
+    - realloc:增加或减少以前分配区的长度
         - 当增加存储空间时，如果在该存储区后还有地址可以使用，则直接在进行扩充即可；否则重新分配一块大的存储区，将数据复制到新存储区中，返回新存储区的地址
 	- 因为存储区可能会移动位置，因此不能够使任何指针指向存储区
 	- 最后一个参数是存储区的新长度，不是新旧之间的长度差
@@ -344,6 +639,7 @@ categories: 笔记
     - `int setjmp(jmp_buf env)`:若直接调用返回时返回值为0；如果从longjmp返回时返回值为longjmp的参数val
     - `void longjmp(jmp_buf env, int val)`:env是setjmp时保存的信息；val是setjmp的返回值
     - 从longjmp返回后自动变量、寄存器变量的值是否回滚要“看情况”，所有的标准都说是不确定的
+        - 在如今高版本的glibc中，longjmp返回后不会恢复signal mask
         - 存放在存储器中的变量不会回滚，在CPU和浮点寄存器中的变量则回滚到调用setjmp时的值
 	- 无论编译器的优化等级，volatile、static和全局变量都存放在存储器中
     - 自动变量的潜在问题
@@ -373,8 +669,8 @@ categories: 笔记
         - 如果父子进程同时写一个文件描述符，但是没有任何的同步，它们的输出就会混合在一起，但是这种操作不常见
 	- 父进程等待子进程完成，这种情况无需对文件描述符做任何处理
 	- 在fork之后，父子进程各自关闭它们不需要的文件描述符，这样就不会干扰到对方了
-    - fork失败的主要原因：系统中有太多的进程了(此时系统出现了问题)；用户拥有的进程数超过了CHILD\_MAX
-    - fork通常的用法：
+    - fork失败的主要原因:系统中有太多的进程了(此时系统出现了问题)；用户拥有的进程数超过了CHILD\_MAX
+    - fork通常的用法:
         - 使得父子进程执行不同的代码，在网络服务进程中是很常见的
 	- 进程希望执行另一个程序，例如shell
 - 函数vfork
@@ -387,13 +683,13 @@ categories: 笔记
     - 3种异常终止
     - 不管进程是如何终止的，内核最后都会执行同一段代码，为进程关闭所有打开的文件描述符，释放它所使用的内存
     - 被终止进程通知其父进程
-        - 正常终止：通过给三个exit函数传递参数或者是main函数的返回值，称为退出状态(exit status)
-	- 异常终止：内核会产生一个终止状态(termination status)
+        - 正常终止:通过给三个exit函数传递参数或者是main函数的返回值，称为退出状态(exit status)
+	- 异常终止:内核会产生一个终止状态(termination status)
 	- 在调用\_exit时，退出状态会成为终止状态
 	- 父进程可以使用wait或waitpid函数获得子进程的终止状态
-    - 孤儿进程：当终止一个进程时，内核会检查当前所有活动的进程是否是该进程的子进程，如果是，那么这些进程会被init进程收养；注意不会被爷爷进程收养
+    - 孤儿进程:当终止一个进程时，内核会检查当前所有活动的进程是否是该进程的子进程，如果是，那么这些进程会被init进程收养；注意不会被爷爷进程收养
     - 内核为每个终止子进程保存了一定量的信息，这些信息可供父进程调用wait或waitpid时查询；
-    - 僵死进程：如果父进程没有对已经终止的子进程进行善后处理(获取子进程的相关信息、释放所占用的资源)，子进程就会成为僵死进程
+    - 僵死进程:如果父进程没有对已经终止的子进程进行善后处理(获取子进程的相关信息、释放所占用的资源)，子进程就会成为僵死进程
 - 函数wait和waitpid
     - 当一个进程终止时，内核就向其父进程发送SIGCHLD信号；系统默认的动作时忽略该信号
     - 调用wait和waitpid时会发生什么
@@ -405,5 +701,1426 @@ categories: 笔记
 	- waitpid可以指定等待的进程；wait是对于所有的子进程
     - 在\<sys/wait.h\>中定义了查看终止状态的宏
     - 如果父进程不想要等待子进程终止又不想让子进程成为僵死进程，可以采用fork两次的方法，将孙子进程托付给systemd进程
-- 函数waitid
+    - 等待子进程结束的标准写法
+    ```
+    //waitpid允许被信号打断，所以使用while循环；如果该信号为SIGCHLD，调用者在信号处理程序中调用了wait函数，那么下次循环waitpid将返回-1，错误码为ECHILD
+    while(waitpid(pid, &status, 0)<0){
+    	if(errno!=EINTR) return -1;
+    }
+    return status;
+    ```
+- 函数waitid:允许一个进程指定要等待的子进程
+- 函数wait3和wait4:允许内核返回由终止进程及其所有子进程使用的资源概况
+- 竞争条件:当多个进程都企图对共享数据进行某种处理，而最后的结果又取决于进程运行的顺序
+    - 不能确定fork之后是调度父进程还是子进程运行
+- 函数exec
+    - 函数名中的字符:p表示使用文件名打开；f表示使用文件描述符打开；l表示使用参数表；v表示使用参数数组；e表示可以设置环境
+    - 执行exec后，新程序从原来的进程继承了许多属性，对于打开的文件与文件描述符的FD\_CLOEXEC有关，可以通过fcntl设置，系统默认是关闭该标志；但是通过opendir打开的目录流是设置该标志的
+    - fexecve可以防止文件被恶意替换，只要在程序中打开文件后内容就不会被篡改
+- 更改用户ID和更改组ID
+    - setuid和setgid
+    - 实际用户ID:当前登录的用户
+    - 有效用户ID:决定进程资源的访问权限
+    - 保存的设置用户ID:由exec复制有效用户ID得到
+    - 更改这三个用户ID有不同的方法
+    - setreuid和setregid:设置实际和有效ID
+    - seteuid和setegid:设置有效ID
+    - 附属组不受setgid、setregid和setegid影响
+- 解释器文件
+    - 起始行为`#! pathname [opt-argument]`的普通文本文件
+    - exec函数实际执行的不是该解释器文件，而是pathname指定的解释器，解释器看到的参数依次为:解释器pathname\-\>解释器文件中的可选参数\-\>解释器文件pathname(替换exec调用的第一个参数)\-\>exec调用的其他参数
+- 函数system
+    - 因为system实际调用了fork、exec和waitpid三个函数，不同情况返回值不同
+    - 设置用户ID或设置组ID的程序决不应调用system，因为system的实现会在fork和exec后保留权限
+- 进程会记:会计记录需要的数据由内核保存在进程表中，在新进程被创建时初始化，终止时写一个会计记录到文件中
+    - 不能获取永不终止进程的会计记录
+    - 会计文件中记录的顺序对应进程的终止顺序，但是不能通过会计文件获取精确的启动顺序
+    - 一个进程sleep的时间总是不精确的
+    - ac\_stat成员记录的并不是进程真正的终止状态
+- 用户标识
+    - getpwuid可以通过uid获得用户的登录名，但是一个用户可能有多个登录名
+    - getlogin可以返回当前用户的登录名，然后可以用getpwnam在口令文件中查找用户的相应记录；在demon中调用此函数返回NULL,但是每个平台都有自己的实现方式，可能会返回用户名
+- 进程调度
+    - `int nice(int incr)`
+        - 在进程原来nice的基础上增加incr
+	- 如果返回值为-1要结合errno判断是否出错;正常情况返回nice值减去NZERO
+    - `int getpriority(int which, id_t who)`:通过which与who的组合可获得相关进程的nice值
+    - `int setpriority(int which, id_t who, int prio)`:可为进程、进程组和属于特定用户ID的所有进程设置优先级
+    - SUS没有规定子进程是否继承父进程的nice值，但是多数系统实现都是继承nice值；进程调用exec后保留nice值
+    - 如果在多核处理器上可能看不到nice值不同带来的差异
+- 进程时间
+    - `clock_t times(struct tms *buf)`
+        - 返回值为墙上时钟，如果需要度量一段时间需要使用两次times返回的差值
+	- 此函数所有的clock\_t必须除以`sysconf(_SC_CLK_TCK)`转换为秒数
+
+# 第九章 进程关系
+- 终端登录
+    - init进程会根据配置文件fork若干个进程，这些子进程执行getty与tty设备建立连接，之后执行login让用户登录，从口令文件中获取用户对应的shell，启动shell，shell读取配置文件设置更多的环境变量
+- 网络登录
+    - 伪终端(pseudo terminal):仿真串行终端的运行行为，并将终端操作映射为网络操作
+    - init创建inetd守护进程等待TCP/IP连接请求到达主机，inetd会根据请求的不同fork进程去exec适当的处理程序，假设现在有telnet请求，inetd创建telnetd进程，telnetd进程打开伪终端设备，并fork分成两条进程，父进程监听网络请求，子进程将文件描述符0,1,2连接到伪终端，然后执行login程序，两者通过伪终端进行连接
+- 无论通过终端登录还是通过网络登录，最终都会得到一个登录shell，其标准输入、输出和错误都连接到终端设备或者伪终端设备
+- 进程组:通常在同一作业控制中结合起来
+    - 同一进程组的各进程接收来自同一终端的各种信号
+    - `pid_t getpgrp(void)`:返回当前进程的进程组ID
+    - `pid_t getpgid(pid_t pid)`:返回pid指定进程的进程组ID，如果pid为0等价于getpgrp
+    - 进程组的生命期:由进程组组长创建进程组，进程组ID等于进程组组长的进程ID，进程组组长创建组中的进程；只要进程组中还有一条进程存在，进程组就存在，与进程组组长是否终止无关;进程组中的最后一个进程可以终止也可以转移到另一个进程组中
+    - `int setpgid(pid_t pid, pid_t pgid)`
+        - 如果pid为0或者pgid为0则使用当前进程ID
+	- 如果pid==pgid，则使当前进程成为进程组组长
+	- 一个进程只能为自己或者子进程设置进程组，当子进程exec之后就不能再设置了；因此一般冗余地在父进程和子进程中都设置子进程的进程组，因为父进程和子进程的执行顺序是不确定的
+- 会话(session):一个或多个进程组的集合
+    - `pid_t setsid(void)`:进程调用此函数建立一个新的会话
+        - 该进程成为新会话的*会话首进程(session leader)*；会话ID为该进程的ID
+	- 创建进程组，该进程成为组长进程；进程组ID为该进程的ID；如果该进程已经拥有进程组，那么函数调用失败
+	    - 为了避免这种调用失败的情况，通常fork子进程，使父进程终止，因为子进程继承了父进程的进程组ID，子进程不可能拥有进程组
+	- 该进程没有控制终端；如果在setsid之前该进程有控制终端，那么这种联系也会被切断
+    - `pid_t getsid(pid_t pid)`
+        - 如果pid为0返回调用进程的所在会话的会话ID
+	- 为了安全考虑，pid只能与调用进程在同一个会话中
+- 控制终端(controlling terminal)
+    - session可以有一个控制终端，这个终端可以是终端设备或者伪终端
+    - 建立与控制终端连接的会话首进程称为控制进程(controlling process)
+        - 如果在open一个终端设备时没有指定O_NOCTTY标志，那么此终端设备成为控制终端
+	- TIOCSCTTY+ioctl
+    - 一个会话中的进程组可以分为一个前台进程组(foreground process group)和一个或多个后台进程组(background process group)
+    - 如果一个会话拥有控制终端，那么有且只有一个前台进程组
+    - 无论何时输入终端的中断键，都会将中断信号发送给前台进程组的所有进程
+    - 无论何时输入终端的退出键，都会将退出信号发送给前台进程组的所有进程
+    - 如果终端检测到断开连接，则将挂断信号发送至控制进程
+    - /dev/tty文件与控制终端是同义词，程序为了与控制终端进行交互，打开此文件即可；如果程序没有控制终端，那么打开此文件将失败
+- 函数tcgetpgrp,tcsetpgrp,tcgetsid
+    - `pid_t tcgetpgrp(int fd)`:获取fd对应终端设备的前台进程组ID
+    - `pid_t tcsetpgrp(int fd, pid_t pgrpid)`:拥有控制终端的进程设置fd对应终端设备的前台进程组ID
+    - `pid_t tcgetsid(int fd)`:获取fd对应的终端设备的会话首进程的进程组ID
+- 作业控制
+    - 有3个特殊字符可使终端驱动程序产生信号，并发送到前台进程组的所有进程
+        - 中断字符(Ctrl+C)产生SIGINT信号
+	- 退出字符(Ctrl+\)产生SIGQUIT信号
+	- 挂起字符(Ctrl+Z)产生SIGTSTP信号
+    - 只有前台作业能够接收终端输入，如果后台作业试图读终端,终端驱动程序会给该后台作业发送SIGTTIN信号停止后台作业，shell会提醒用户这种情况
+    - 后台作业能否写终端是一个可选项，如果禁止，终端驱动程序会给试图写终端的后台作业发送SIGTTOUT信号停止后台作业，shell也会提醒用户
+- shell执行程序
+    - 如果后台进程通过打开/dev/tty的方式读终端，因为此时前台进程和后台进程同时要读终端，此时的结果要看情况
+    - 使用不同的shell创建各个进程的顺序可能不同
+- 孤儿进程组(orphan process group):该进程组中的每个进程的父进程都属于另一个会话
+    - POSIX.1要求向孤儿进程组中处于停止状态的每个进程发送SIGHUP信号，接着向其发送SIGCONT信号
+    - 对于挂断信号(SIGHUP)系统默认的操作是终止进程，因此必须提供一个信号处理函数
+    - 当父进程终止时，子进程变成后台进程
+- FreeBSD的实现
+
+# 第十章 信号
+- 不存在编号为0的信号，kill函数对编号0有特殊应用；POSIX.1将编号0称为空信号
+- 产生信号的条件
+    - 某些终端按键
+    - 硬件异常，例如对无效内存引用产生SIGSEGV
+    - 软件条件发生，例如定时器超时产生SIGALRM
+    - kill函数，只能向owner相同的进程发送信号
+    - kill命令，调用kill函数
+- 信号处理方式
+    - 忽略信号:SIGKILL和SIGSTOP不能忽略，如果忽略硬件异常产生的信号，那么进程的行为是未定义的
+    - 捕捉信号:不能捕捉SIGKILL和SIGTOP
+    - 系统默认行为:一般是终止进程
+- 不产生core文件的条件
+    - 进程是设置用户ID的，并且当前用户非程序的owner
+    - 进程是设置组ID的，并且当前用户不属于该用户组
+    - 在当前目录下没有写权限
+    - core文件已存在，并且用户对该文件没有写权限
+    - core文件太大了
+- 主要的信号类型
+    - SIGABRT:调用abort函数产生此信号
+    - SIGALRM:alarm函数或setitimer函数超时
+    - SIGCHLD:当一个进程停止或终止时，此信号发送给父进程
+    - SIGCONT:如果一个已经停止的进程收到此信号，进程继续运行；正在运行的进程将忽略此信号
+    - SIGFPE:算术运算异常，例如除以0、浮点溢出
+    - SIGHUP:如果终端接口检测到连接断开，则将此信号发送给会话首进程；如果连接的终端是本地的，那么将不会产生此信号
+    - SIGINT:Ctrl+C
+    - SIGKILL:杀死任一进程可靠的方法
+    - SIGPIPE:
+    - SIGQUIT:Ctrl+\；发送给前台进程组中所有进程，与SIGKILL相比，还会产生core文件
+    - SIGSEGV:无效的内存引用(segmentation violation)
+    - SIGSTOP:作业控制信号；与交互停止信号SIGTSTP相比，此信号不能忽略或捕获
+    - SIGSYS:无效的系统调用
+    - SIGTERM:kill(1)发送的默认系统终止信号，相比于SIGKILL，该信号是可以捕获的，可以使程序在退出前做好清理工作
+    - SIGTSTP:Ctrl+Z；交互停止信号(挂起)
+    - SIGTTIN:后台进程组进程试图读控制终端，例外情况:读进程忽略或阻塞信号；读进程属于孤儿进程组，此时读操作返回出错
+    - SIGTTOUT:后台进程组进程试图写控制终端，一些终端操作也能产生此信号，例外情况:允许后台进程写控制终端；写进程忽略或阻塞信号；谢金成属于孤儿进程组，此时写操作返回出错；
+- 函数signal
+    - `void (*signal(int signo, void (*func)(int)))(int)`
+        - func的取值可以是SIG_IGN,SIG_DFL或自定义的signal handler函数
+	- 成功返回之前设置的信号处理函数，失败返回SIG\_ERR
+    - 当执行一个程序时，所有信号的状态都是系统默认的动作
+    - 当调用exec时，将原先设置为捕获的信号都更改为默认动作，其他信号状态不变
+    - fork创建的子进程继承父进程的信号处理方式
+- 不可靠的信号:在早期的UNIX版本中，信号可能会丢失
+    - 阻塞信号:内核记住发生的信号，在进程准备好后再通知进程该信号
+    - 在早期版本中，进程每次接受到信号进行处理时，该信号动作随即被重置为默认值，因此需要每次重新绑定
+    - 在早期版本中，如果进程不希望某种信号发生，它不能关闭该信号
+- 中断的系统调用:如果进程正在执行一个低速的系统调用而处于阻塞状态，如果这时接收到信号，那么系统调用就会被中断而不再执行
+    - 低速系统调用:可能会使进程永远阻塞的系统调用
+        - 如果某些类型文件(如管道、终端设备和网络设备)的数据不存在，读操作可能会使调用者永远阻塞
+	- 如果写上述类型文件时数据不能被立即接受，写操作可能会使调用者永远阻塞
+	- 在某种条件发生之前打开某种类型文件，可能会发生阻塞（例如打开一个还未准备好的终端设备）
+	- pause函数(按照定义，使调用sleep直到接收到信号)和wait函数
+	- 某些ioctl操作
+	- 某些进程间通信函数
+	- 例外情况是与磁盘相关的I/O操作，除非硬件错误，它总是能够很快返回
+    - 为了帮助应用程序不必处理被中断的系统调用，引进了某些被中断的系统调用的自动重启动
+- 可重入函数
+    - 可重入函数是指当一个函数在执行过程中，又在*另一个地方*调用了这个函数，如果所有执行结果都正确，那么就是可重入函数，根据“另一个地方”的不同，可以分为
+        - 异步信号安全:在信号处理中调用了相同函数
+	- 线程安全:在另一个线程中调用了相同函数
+	- 因为信号处理函数会一直执行完然后才返回原来被打断的地方继续执行；但是多线程是由操作系统调度的，可能新线程这个函数还没执行完就被调度回原来的线程继续执行了
+    - 在信号处理程序中保证调用安全的函数，这些函数被称为async-signal safe
+    - 函数不满足异步信号安全的原因
+        - 使用静态数据结构
+	- 调用了malloc和free
+	- 标准I/O库函数，很多标准I/O库函数使用全局数据结构
+    - 因为error是全局变量，所以作为一个通用的规则，如果信号处理函数可能会改变errno，则应先保存errno值，函数结束前恢复errno；注意wait族函数都会改变errno
+    - 注意longjmp和siglongjmp都不是异步安全的
+- SIGCLD语义
+    - SIGCLD是System V的一个信号名，语义与SIGCHLD的BSD信号不同
+- 可靠的信号术语和语义
+    - generation:通过各种方式产生信号
+    - delivery:当对信号采取了动作时，称为向进程递送了一个信号
+    - pending:在generation和delivery之间的时间信号处于未决状态
+    - blocking:进程可以选择是否阻塞信号递送；如果为进程产生一个阻塞信号，并且对该信号的动作是系统默认动作或捕捉该信号，则此信号保持为pending状态，直到进程忽略该信号或者解除该信号的阻塞
+    - 内核在递送一个原来阻塞的信号给进程时才决定该信号的动作，于是进程可以在递送之前改变信号的动作
+    - 如果pending的信号发生了多次，那么大多数UNIX系统只会递送信号一次
+    - POSIX.1没有规定多个信号递送的顺序，但是建议在其他信号之前递送与进程当前状态有关的信号，比如SIGSEGV
+    - 每个进程都有一个信号屏蔽字(signal mask)，规定了当前要阻塞递送的信号集
+- 函数kill和raise:raise是ISO C定义的，但是ISO C不涉及多进程，因此POSIX.1定义了kill
+    - `int raise(int signo)`:向进程本身发送信号
+    - `int kill(pid_t pid, int signo)`
+        - pid>0:发送给进程pid
+	- pid==0:发送给同一进程组的所有进程，系统进程集除外
+	- pid<0:发送给进程组绝对值pid，系统进程集除外
+	- pid==-1:发送给所有有权限发送的进程，系统进程集除外
+    - 权限检测
+        - 超级用户可以发信号给任一进程
+        - 发送者的实际用户ID或有效用户ID是否等于接受者的实际用户ID或有效用户ID
+	- 如果实现支持保存设置用户ID，则检测保存设置用户ID而不是有效用户ID
+	- SIGCONT可以发送给同一个会话的任一其他进程
+    - POSIX.1将编号0定义为空信号，可以通过发送空信号来确定一个进程是否存在，但是这种测试操作并不是原子的，因此意义不大
+    - 在kill返回前，如果signo没有被blocked，那么signo或者某个其他pending但非blocked的信号被递送给了进程;也就是说在kill返回前至少执行了某个信号的动作
+- 函数alarm和pause
+    - `unsigned int alarm(unsigned int seconds)`
+        - 从信号发生到进程能够处理该信号有延迟，因此seconds并不是准确的
+	- 每个进程只有一个闹钟，如果在上一个闹钟还未到期时重新调用alarm
+	    - seconds==0，取消还未到期的闹钟
+	    - 否则设置新的闹钟，取消之前的闹钟
+	- SIGALRM系统默认的动作是终止进程，如果在安装处理程序前接收到信号，那么程序将被终止
+    - `int pause(void)`
+        - 只有执行了一个信号处理程序并从其返回时，pause才返回，此时返回值为-1，errno设置为EINTR
+    - alarm+pause+longjmp实现sleep，但是存在与其他信号交互的问题
+    - 利用alarm中断低速的系统调用
+- 信号集
+    - 一个整形数据不足以保存所有信号，所以POSIX.1使用sigset\_t包含一个信号集
+    - sigemptyset:清空信号集
+    - sigfillset:填充信号集
+    - sigaddset:将一个信号加入到信号集中
+    - sigdelset:从信号集中删除一个信号
+    - sigismember:判断一个信号是否属于信号集
+- 函数sigprocmask:可以检测或更改当前进程的信号屏蔽字
+    - `int sigprocmask(int how, const sigset_t *restrict set, sigset_t *restrict oset)`
+        - 如果oset非空，保留旧的signal mask
+	- 如果set非空，根据how设置signal mask
+	    - SIG\_BLOCK:并集，set包含了希望阻塞的信号
+	    - SIG\_UNBLOCK:差集，set包含了希望解除阻塞的信号
+	    - SIG\_SETMASK:将set设置为信号屏蔽字
+    - 如果调用sigprocmask之后有任何pending但是现在unblock的信号，则在sigprocmask返回之前至少将其中之一递送给进程
+    - sigprocmask只是为单线程定义的
+- 函数sigpending
+    - `int sigpending(sigset_t *set)`
+        - 返回进程当前阻塞不能递送的信号
+- 函数sigaction:检查或修改与指定信号相关的动作
+    - `int sigaction(int signo, const struct sigaction *restrict act, strct sigaction *restrict oact)`
+```
+struct sigaction{
+	void (*sa_handler)(int);	//信号处理函数
+	sigset_t sa_mask;	//在调用信号处理函数之前加入到信号屏蔽字中，仅当从信号处理函数返回时恢复原来的信号屏蔽字，系统默认会将当前信号加入到屏蔽字中
+	int sa_flag;		//指定对信号处理的选项，比如信号中断的系统调用重新启动SA_RESTART，默认是不重新启动
+	void (*sa_sigaction)(int, siginfo_t *, void *);	//替代的信号处理程序，如果sa_flag包含了SA_SIGINFO那么其替代sa_handler作为信号处理函数
+}
+```
+    - 对一个信号设置了动作之后，与早期不可靠信号机制不同，此动作一直有效除非重新设置
+    - 现在很多平台都是使用sigaction实现可靠的signal
+    - 可以在调用sigaction时指定SA\_RESETHAND和SA\_NODEFER选项实现不可靠的signal函数
+- 函数sigsetjmp和siglongjmp
+    - 使用longjmp的问题:进入信号处理函数时默认会阻塞该信号，退出处理函数时会恢复信号屏蔽字，但是longjmp直接就跳出了处理函数；POSIX.1没有规定longjmp是否会恢复信号屏蔽字
+    - 在信号处理函数中进行跳转时应该使用siglongjmp不能使用longjmp
+    - `int sigsetjmp(sigjmp_buf env, int savemask)`
+        - 如果savemask非零，则sigsetjmp在env中保留信号屏蔽字；在调用siglongjmp时会恢复信号屏蔽字
+        - 因为信号是异步发生的，在使用siglongjmp时必须确保sigsetjmp已经保存好环境了，可以采用一个标志变量的方式获得这种同步
+            - 标志变量的类型为sig\_atomic\_t:ISO C标准类型；可以使用一条机器指令访问该变量，意味着这种变量不会跨页边界
+	    - 标志变量的类型为volatile:因为该变量由两条线程访问，main线程和信号处理程序
+- 函数sigsuspend:原子地设置信号屏蔽字并等待信号
+    - `int sigsuspend(const sigset_t *sigmask)`
+    - 将signal mask设置为sigmask，在递送一个信号之前，进程会被挂起
+    - 该函数总是返回-1，并将errno设置为EINTR
+    - 当sigsuspend返回时，恢复信号屏蔽字为调用之前的值
+    - 如果希望在等待信号时睡眠那么sigsuspend是最好的选择，但是希望在等待信号时调用系统函数，那么在多线程环境中比较容易实现，可以专门安排一个线程处理信号
+- 函数abort(POSIX.1实现)
+    - 函数abort产生SIGABRT信号
+    - 进程不能够忽略或者阻塞SIGABRT信号，由abort实现保证
+    - abort()不会返回其调用者，而是直接终止进程
+    - abort()在终止进程前会fflush标准流
+- 函数system
+    - POSIX.1要求system实现阻塞SIGCHLD，忽略SIGINT和SIGQUIT
+        - 阻塞SIGCHLD:system函数创建子进程执行命令，然后通过wait函数获取子进程的状态并返回；如果此时调用者(system所在的进程)注册了SIGCHLD处理函数，那么子进程的终止将会调用该处理函数，一般在SIGCHLD的处理函数中都会调用wait获取子进程的状态；这时system函数就不能wait子进程的状态了
+	- 忽略SIGINT和SIGQUIT:这两种信号可以发送给前台进程组，但是因为system的调用者此时放弃了控制，所以system所在的进程不应该接收到这两种信号
+    - POSIX.1规定在SIGCHLD Pending期间，如果调用了wait类函数获得了子进程的状态，那么SIGCHLD不应该传递给父进程;但是Linux没有遵循这一实现
+    - system的返回值
+        - 因为system函数wait获得的状态是shell子进程的返回值，但是shell的返回值不一定就是执行命令的返回值
+        - 当shell在执行命令时如果被某种信号打断，那么shell的返回值就是128+信号值
+	- 如果手动调用fork、exec和wait去模拟system，其中exec直接执行命令而不是通过shell，那么返回值与system函数一般不同
+	- 还要注意不同shell返回值的规定不尽相同
+- 函数sleep、nanosleep和clock\_nanosleep
+    - `unsigned int sleep(unsigned int second)`
+        - 如果过了second指定的墙上时钟时间，返回0
+	- 如果由于捕捉到信号而提前唤醒，返回未休眠的秒数
+	- 由于其他系统活动的影响，实际返回的时间会迟一些
+	- sleep可以通过alarm实现，但是这两个函数会相互影响，因此多数平台使用nanosleep函数实现sleep；为了可移植性，不应对实现做假设
+	- 线程安全的sleep可以通过select实现
+    - `int nanosleep(const struct timespec *reqtp, struct timespec *remtp)`
+        - 如果休眠到达reqtp指定的时间，返回0
+	- 如果被某个信号中断，返回-1，并将未休眠的时间记录在remtp中
+	- 如果系统不支持纳秒级的延时，那么时间将会取整
+    - `int clock_nanosleep(clockid_t clock_id, int flags, const struct timespec *reqtp, struct timespec *remtp)`
+        - flags为0表示休眠时间是相对的，为TIMER\_ABSTIME表示休眠时间是绝对的
+	- 获取当前时间，计算任务需要运行的时间(已知任务停止的时间),然后调用nanosleep，在获取和计算运行时间期间处理器的调度和抢占可能会导致相对休眠时间超过实际需要的时间间隔；此时使用绝对时间会改善精度
+- 函数sigqueue
+    - `int sigqueue(pid_t pid, int signo, const union sigval value)`
+        - value参数可以传递整数或指针
+	- 只能向一个进程发送信号
+	- 信号不能无限排队，如果超过SIGQUEUE\_MAX限制，sigqueue失败返回-1
+    - 使用排队信号需要进行如下的操作
+        - 使用sigaction安装处理程序时需要指定SA\_SIGINFO标志；如果没有给出这个标志，是否排队要看具体实现(Linux支持排队)
+	- 信号处理程序要安装在sa\_sigaction成员中；实现可能允许用户使用sa\_handler这个字段，但不能获得sigqueue函数发送的额外信息
+	- 使用sigqueue发送信号
+	- 不同实现支持不同信号的排队，例如Linux对SIGRTMIN和SIGRTMAX之外的信号不排队
+- 作业控制信号
+    - 具体的信号:SIGCHLD、SIGCONT、SIGSTOP、SIGTSTP、SIGTTIN、SIGTTOU
+    - 多数应用程序只关心SIGCHLD信号，shell会处理其他信号
+    - 作业控制信号间的交互:SIGCONT会丢弃任何未决的4种停止信号(SIGTSTP,SIGSTOP,SIGTTIN,SIGTTOU)；同理，4种停止信号也会丢弃未决的SIGCONT
+    - 当对一个停止的进程产生SIGCONT时，该进程就会继续，即使该信号是阻塞的或忽略也是如此
+- 信号名和编号
+    - `extern char *sys_siglist[]`:数组下标为信号标号，数组元素为信号名
+    - `void psignal(int signo, const char *msg)`:输出到标准错误，输出格式为msg+:+空格+对应signo的描述+'\n'
+    - `void psiginfo(const siginfo_t *info, const char *msg)`:工作方式与psignal类型，但输出siginfo\_t的信息
+    - `char *strsignal(int signo)`:返回描述信号信息的字符串
+
+# 第十一章 线程
+- 线程概念
+    - 有了多个控制线程之后，在程序设计时就可以把进程设计成在某个时刻能够处理多个任务，可以带来很多好处:
+        - 为每种事件分配独立的处理线程，可以简化处理异步事件的代码，在每种事件的线程内进行同步编程
+	- 线程之间共享资源非常方便
+	- ...
+    - 即使在单处理器上也能够获得多线程带来的好处
+    - *每个线程都包含有表示执行环境所必须的信息*
+        - 线程ID
+	- 一组寄存器值
+	- 栈
+	- 调度优先级和策略
+	- 信号屏蔽字
+	- errno变量
+	- 线程私有数据
+    - *一个进程的所有信息对所有线程都是共享的*
+        - 可执行程序代码
+	- 全局内存和堆内存
+	- 栈
+	- 文件描述符
+    - 测试系统是否支持线程
+        - 功能测试宏`_POSIX_THREADS`,在编译时确定
+	- 通过sysconf查看`_SC_THREADS`，在运行时确定
+- 线程标识
+    - 进程ID在整个系统中都是唯一的，线程ID只有在进程上下文中才有意义
+    - `int pthread_equal(pthread_t tid1, pthread_t tid2)`
+        - 因为不同实现采用不同的结构表示pthread\_t,为了可移植性，使用此函数判断两个tid是否相等
+    - `pthread_t pthread_self(void)`
+        - 此函数返回当前线程ID
+- 线程创建
+    - `int pthread_create(pthread_t *restrict tidp, const pthread_attr_t *restrict attr, void *(*start_rtn)(void *), void *restrict arg)`
+        - 新创建线程的ID会存放在tidp的内存单元中
+	- 新创建线程会从start\_rtn的地址开始执行，arg为传入的参数
+    - 同创建进程类似，创建线程不能保证新线程和调用线程的执行顺序
+    - 新线程继承调用线程的浮点环境和信号屏蔽字，但是该线程的挂起信号集被清空
+    - pthread函数调用失败会直接返回错误码，而不是设置errno
+- 线程终止
+    - 如果任一线程调用了exit类的函数，那么整个进程都会终止；如果信号的默认动作是终止进程，那么当线程接收到信号后，进程也会终止
+    - 线程可以通过以下方法退出而不终止整个进程
+        - 直接从启动例程返回，返回值将作为线程的退出码
+	- 线程可以被同一进程的其他线程取消
+	- 调用pthread\_exit
+    - `void pthread_exit(void *rval_ptr)`
+        - 进程中的其他线程可以调用pthread\_join访问到rval\_ptr
+	- 注意要保证rval\_ptr的内存在线程结束后仍然有效，可以采用全局变量或者堆内存的方式
+    - `int pthread_join(pthread_t thread, void **rval_ptr)`
+        - 调用线程会一直阻塞，直到指定的线程从例程返回或者被取消
+	    - 如果指定线程从例程返回，那么rval\_ptr保存的是返回值
+	    - 如果指定线程被取消，rval_ptr被设置为PTHREAD\_CANCELED
+	- 如果对返回值不感兴趣，可以直接设置为NULL
+	- 释放joinalbe线程占用的资源,对处于detached状态的线程调用该函数产生未定义的行为，一般出错返回
+    - `int pthread_cancel(pthread_t tid)`
+        - 该函数使得tid线程的行为如同调用了PTHREAD\_CANCELED的pthread\_exit函数，但是线程可以选择忽略或者控制如何被取消
+	- 该函数只是提出请求而已，不会阻塞
+    - `void pthread_cleanup_push(void (*rtn)(void*), void *arg)`
+    - `void pthread_cleanup_pop(int execute)`
+        - rtn被称为线程清理处理程序，一个线程可以通过pthread\_cleanup\_push注册多个线程清理处理程序，它们被记录在栈中，因此调用时的顺序与注册时的顺序相反
+	- 当线程执行下列动作时，清理处理程序被调用
+	    - 当调用pthread\_exit时，调用全部清理处理程序，注意从启动例程返回不调用
+	    - 响应取消请求时，调用全部清理处理程序
+	    - 调用pthread\_cleanup\_pop函数时会从栈顶移除一个清理处理程序，只有当execute非0时才会执行
+	- 因为这些函数可以被实现为宏，因此必须在与线程相同的作用域中以匹配对的形式使用
+        - 在push和pop函数之间直接return的行为是未定义的，可移植性的做法是使用pthread\_exit
+	- `int pthread_detach(pthread_id tid)`
+	    - 线程的终止状态会保存直到对该线程调用pthread\_join
+	    - 调用该函数可以使线程处于分离状态，处于分离状态的线程在终止时资源立即被回收
+- 进程和线程的同步原语
+
+进程原语|线程原语|描述
+fork|pthread\_create|创建新的控制流
+exit|pthread\_exit|从现有的可控制流退出
+waitpid|pthread\_join|从控制流中得到退出状态
+atexit|pthread\_cancel\_push|注册在退出控制流时调用的函数
+getpid|pthread\_self|获取控制流的ID
+abort|pthread\_cancel|请求控制流的非正常退出
+
+- 线程同步
+    - 由计算机体系结构产生的竞争条件，对一个变量的读写需要多个存储周期，不是原子操作
+    - Time of check to time of use;例如对一个变量的增量操作和对这个变量的判断不走不是原子操作
+    - 互斥量(mutex)
+        - 如果线程对互斥量加锁失败，那么就会*阻塞线程*直到互斥量可用
+	- 当一个互斥量可用时，所有阻塞在该互斥量的线程都会被唤醒，第一个变为可运行的线程就可以获得该互斥量，其他线程就会继续阻塞
+	- `int pthread_mutex_init(pthread_mutex_t *restrict mutex, const pthread_mutexattr_t *restrict attr)`
+	    - 如果mutex是动态分配的，必须在使用mutex之前调用此函数进行初始化
+	    - 如果mutex是静态分配的，可以将其设置为PTHREAD\_MUTEX_INITIALIZER进行初始化
+	    - 当attr为NULL时，使用默认属性初始化互斥量
+	- `int pthread_mutex_destroy(pthread_mutex_t *mutex)`
+	    - 如果mutex是通过malloc动态分配的，那么在释放内存之前需要调用此函数
+	- `int pthread_mutex_lock(pthread_mutex_t *mutex)`
+	- `int pthread_mutex_trylock(pthread_mutex_t *mutex)`
+	    - 如果成功获得互斥量返回0;否则直接返回EBUSY
+	- `int pthread_mutex_unlock(pthread_mutex_t *mutex)`
+    - 避免死锁
+        - 控制互斥量加锁的顺序来避免死锁，所有线程都按照一定的顺序获得锁
+	- 线程通过trylock判断是否可以获得锁，如果不能获得锁那么就释放拥有的所有锁
+	- 程序员需要在代码复杂性和性能之间找到正确的平衡
+    - 函数pthread\_mutex\_timedlock
+        - `int pthread_mutex_timedlock(pthread_mutex_t *restrict mutex, const struct timespec *restrict tsptr)`
+	    - tsptr指定的是绝对时间，意味着线程在该时间之前都可以阻塞，超过这个时间就返回ETIMEDOUT
+    - 读写锁(reader-writer lock)
+        - 共享读，互斥写
+	- 通常实现为写者优先，持有读锁时，当有写者在阻塞，会阻塞读者继续进入
+	- `int pthread_rwlock_init(pthread_rwlock_t *restrict rwlock, const pthread_rwlockattr_t *restrict attr)`
+	    - 读写锁在使用之前必须初始化
+	    - attr为NULL时使用默认的读写锁属性
+	- `int pthread_rwlock_destroy(pthread_rwlock_t *restrict rwlock)`
+	    - 在释放内存之前，必须先销毁读写锁
+	    - 如果提前释放内存，那么在pthread\_rwlock\_init函数分配给锁的资源将无法回收
+        - `int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock)`
+	    - 加读者锁
+	    - 实现可能限制读者的数目，因此每次都应该检查返回值
+	- `int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock)`
+	    - 加写者锁
+	    - 只要程序设计合理，就不需要检查错误返回值
+	- `int pthread_rwlock_unlock(pthread_rwlock_t *rwlock)`
+	    - 解锁
+	    - 只要程序设计合理，就不需要检查错误返回值
+	- `int pthread_rwlock_tryrdlock(pthread_rwlock_t *rwlock)`
+	- `int pthread_rwlock_trywrlock(pthread_rwlock_t *rwlock)`
+    - 带有超时的读写锁
+        - `int pthread_rwlock_timedrdlock(pthread_rwlock_t *restrict rwlock, const struct timespec *restrict tsptr)`
+        - `int pthread_rwlock_timedwrlock(pthread_rwlock_t *restrict rwlock, const struct timespec *restrict tsptr)`
+	    - 指定的是绝对时间
+	    - 在超时之前获得锁返回0；超时返回ETIMEDOUT
+    - 条件变量(condition varibles)
+        - 条件变量本身需要通过互斥量保护，在更改条件之前需要先锁住互斥量
+	- 使用条件变量之前必须进行初始化
+	    - 静态分配:使用PTHREAD\_COND_INITIALIZER
+	    - 动态分配
+	        - `int pthread_cond_init(pthread_cond_t *restrict cond, const pthread_condattr_t *restrict attr)`
+		    - attr为NULL时使用默认属性的条件变量
+		- `int pthread_cond_destroy(pthread_cond_t *cond)`
+		    - 释放内存之前调用
+        - 等待条件
+	    - `int pthread_cond_wait(pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex)`
+	        - 调用者把锁住的互斥量传递给mutex参数，mutex在函数内会被解锁，返回时会再次加锁
+	    - `int pthread_cond_timedwait(pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex, const struct timespec *restrict tsptr)`
+	        - tsptr指定的是绝对时间
+        - 给线程发信号
+	    - `int pthread_cond_signal(pthread_cond_t *cond)`
+	        - 至少唤醒一个等待cond的线程
+	    - `int pthread_cond_broadcast(pthread_cond_t *cond)`
+	        - 唤醒所有等待cond的线程
+	    - 一定要在条件改变时在发信号
+	- 序列1
+	    - 对互斥量加锁
+	    - 改变互斥量保护的条件
+	    - 给等待条件的线程发信号
+	    - 对互斥量解锁
+	- 序列2:等待的线程在返回后需要检查条件是否真的为满足条件，与序列1相比因为先对互斥量解锁，所以其他运行线程可能抢在还在等待队列中的线程之前修改了这个条件
+	    - 对互斥量加锁
+	    - 改变互斥量保护的条件
+	    - 对互斥量解锁
+	    - 给等待条件的线程发信号
+    - 自旋锁(spin lock)
+        - 它不是通过休眠使进程阻塞，而是通过忙等使进程阻塞
+	- 自旋锁在底层非常有用，是中断处理程序唯一的同步原语，但是在用户层并不是那么有用
+	- 如果等待锁的时间非常短，那么自旋锁相比互斥量高效，体现在可以直接使用测试并设置指令，不需要切换上下文
+	- `int pthread_spin_init(ptrhead_spinlock_t *lock, int pshared)`
+	    - pshared
+	        - PTHREAD\_PROCESS\_SHARED:可以被不同进程的线程访问
+		- PTHREAD\_PROCESS\_PRIVATE:只可以被当前进程的线程访问
+	- `int pthread_spin_destory(pthread_spinlock_t *lock)`
+	- `int pthread_spin_lock(pthread_spinlock_t *lock)`
+	- `int pthread_spin_trylock(pthread_spinlock_t *lock)`
+	- `int pthread_spin_unlock(pthread_spinlock_t *lock)`
+	- 自旋锁递归加锁，行为未知，可能永久自旋，有可能返回出错
+	- 解锁为加锁的自旋锁行为未知
+	- 不要在持有自旋锁时调用可能会休眠的函数，这样会非常浪费CPU资源
+    - 屏障(barrier)
+        - `int pthread_barrier_init(pthread_barrier_t *restrict barrier, const pthread_barrierattr_t *restrict attr, unsigned int count)`
+	    - count指定到达屏障线程的数量，才能继续运行
+	- `int pthread_barrier_destroy(pthread_barrier_t * barrier)`
+	- `int pthread_barrier_wait(pthread_barrier_t *barrier)`
+	    - 该函数表明当前线程已经就位了，等待其他线程
+	    - 如果当前就位的线程数量为满足条件，那么进入休眠状态；如果当前线程是最慢的一个，那么会唤醒所有休眠的线程
+	    - 对一个任一线程，该函数返回`PTHREAD_BARRIER_SERIAL_THREAD`,可以将其作为主线程，其他线程得到的返回值为0
+	    - 每次达到屏障计数值后可以重用屏障；但是如果要修改计数值，需要先调用destroy函数，再调用init函数
+
+# 第十二章 线程控制
+- 线程限制
+    - 见图12\-1
+    - 通过sysconf可能没办法获得某些限制值，但是并不意味着它们是无限制的，只是操作系统没有为这些限制提供可用的方法
+- 线程属性(pthread\_attr\_t)
+    - pthread接口提供的属性对象遵循相同的模式
+        - 每种属性对象(线程对应线程属性，互斥量对应互斥量属性)，是黑盒的，应用程序不需要了解其内部结构
+	- 有一个初始化函数，将属性设置为默认值
+	- 有一个销毁函数，负责回收在初始化时分配给属性对象的资源
+	- 从属性对象中获取某种属性的get方法
+	- 设置属性对象某种属性的set方法
+    - `int pthread_attr_init(pthread_attr_t *attr)`
+        -将attr所有属性设置为默认值
+    - `int pthread_attr_destroy(pthread_attr_t *attr)`
+        - 释放在init函数时分配的资源
+	- 使用无效值初始化attr，在pthread\_create使用时会返回出错码，防止对象被误用
+	- 如果destroy返回错误，将很难进行清理
+    - detachstate:线程的分离状态，离群线程在终止时由操作系统回收资源；合群的线程必须通过pthread\_join回收资源
+        - `int pthread_attr_getdetachstate(const pthread_attr_t *restrict attr, int *detachstate)`
+        - `int pthread_attr_setdetachstate(pthread_attr_t *attr, int *detachstate)`
+	    - detachstate取值:`PTHREAD_CREATE_DETACHED`,`PTHREAD_CREATE_JOINABLE`
+    - stackaddr,stacksize
+        - 遵循POSIX标准的系统不一定支持线程栈属性
+	    - 编译阶段通过查看`_POSIX_THREAD_ATTR_STACKADDR`或`_POSIX_THREAD_ATTR_STACKSIZE`是否定义
+	    - 运行时，通过sysconf检查`_SC_THREAD_ATTR_STACKADDR`或`_SC_THREAD_ATTR_STACKSIZE`
+	- `int pthread_attr_getstack(const pthread_attr_t *restrict attr, void **restrict stackaddr, size_t *restrict stacksize)`
+	- `int pthread_attr_setstack(pthread_attr_t *attr, void *stackaddr, size_t stacksize)`
+	    - stackaddr为线程栈的最低内存地址，由处理器结构决定该地址是栈的开始位置还是结尾位置
+	- `int pthread_attr_getstacksize(const pthread_attr_t *restrict attr, size_t *restrict stacksize)`
+	- `int pthread_attr_setstacksize(pthread_attr_t *attr, size_t stacksize)`
+	    - 调整栈的大小，不需要自己处理栈的分配，适合懒人
+    - guardsize:线程栈末尾用来避免栈溢出的扩展内存大小
+        - 修改线程属性stackaddr，系统认为我们将自己管理栈，使警戒缓冲区机制失效，因此等同于将guardsize设置为0
+	- 如果栈指针到达了警戒缓冲区，那么线程可以通过信号接受出错信息
+	- `int pthread_attr_getguardsize(const pthread_attr_t *restrict attr, size_t *restrict guardsize)`
+	- `int pthread_attr_setguardsize(pthread_attr_t *attr, size_t guardsize)`
+	    - 一般设置为页的整数倍
+    - 为实时应用提供的属性
+    - 线程还有一些属性不在pthread\_attr\_t结构中:可撤销状态，可撤销类型
+- 同步属性
+    - 互斥量属性(pthread\_mutexattr\_t)
+        - `int pthread_mutexattr_init(pthread_mutexattr_t *attr)`
+	    - 使用默认值初始化attr
+	- `int pthread_mutexattr_destroy(pthread_mutexattr_t *attr)`
+        - 进程共享属性
+            - 判断系统是否支持:`_POSIX_THREAD_PROCESS_SHARED`,`_SC_THREAD_PROCESS_SHARED`
+	    - 可选值
+	        - `PTHREAD_PROCESS_SHARED`:从多个进程间的共享存储中分配的互斥量就可以在进程间使用;开销较大
+		- `PTHREAD_PROCESS_PRIVATE`:默认行为；可以提供更有效的实现
+	    - `int pthread_mutexattr_getpshared(const pthread_mutexattr_t *restrict attr, int *restrict pshared)`
+	    - `int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared)`
+        - 健壮属性
+	    - 该属性与多个进程或同一进程多个线程共享互斥量有关，用于恢复进程或线程在终止时没有释放获得的互斥量的状态
+	    - 可选值
+	        - `PTHREAD_MUTEX_ROBUST`:等待的线程会获得锁，但是返回值是EOWNERDEAD，此时需要进行状态的恢复
+		    - `int pthread_mutex_consistent(pthread_mtex_t *mutex)`:指明互斥量的状态是一致的
+		    - 如果应用状态是可恢复的，那么获得互斥量的进程在解锁之前需要调用`pthread_mutex_consistent`函数，以便使互斥量持续可用
+		    - 如果应用状态不可恢复，解锁互斥量之前不调用consistent函数，互斥量将不再可用，试图获得该互斥量的线程会得到错误码
+		- `PTHREAD_MUTEX_STALLED`:默认值；等待该互斥量的线程将一直等待
+	    - `int pthread_mutexattr_getrobust(const pthread_mutexattr_t *restrict attr,  int *restrict robust)`
+	    - `int pthread_mutexattr_setrobust(pthread_mutexattr_t *attr, int robust)`
+	    - 使用robust使得我们在等待互斥量可用时，需要检查三种情况
+	        - 不需要恢复的成功
+		- 需要恢复的成功
+		- 失败
+        - 类型属性
+            - 可选类型
+	        - `PTHREAD_MUTEX_NORMAL`:不做任何错误检查或死锁检测
+		- `PTHREAD_MUTEX_ERRORCHECK`:提供错误检查
+		- `PTHREAD_MUTEX_RECURSIVE`:允许*同一个线程*递归加锁
+		- `PTHREAD_MUTEX_DEFAULT`:提供默认特性和行为，实现可以将其映射到前面三种类型
+	    - 各种类型具体的行为见图12\-5
+	    - `int pthread_mutexattr_gettype(const pthread_mutexattr_t *restrict attr, int *restrict type)`
+	    - `int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type)`
+	- 在使用条件变量时，使用可递归的互斥量就不是很合适
+    - 读写锁属性(pthread\_rwlockattr\_t)
+        - `int pthread_rwlockattr_init(pthread_rwlockattr_t *attr)`
+	- `int pthread_rwlockattr_destroy(pthread_rwlockattr_t *attr)`
+        - POSIX只定义了一个属性:进程共享属性
+	    - `int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *restrict attr, int *restrict pshared)`
+	    - `int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *attr, int pshared)`
+	    - 使用同互斥量
+        - 具体实现可以支持其它属性
+    - 条件变量属性(pthread\_condattr\_t)
+        - `int pthread_condattr_init(pthread_condattr_t *attr)`
+	- `int pthread_condattr_destroy(pthread_condattr_t *attr)`
+	- 进程共享属性
+	    - `int pthread_condattr_getpshared(const pthread_condattr_t *restrict attr, int *restrict pshared)`
+	    - `int pthread_condattr_setpshared(pthread_condattr_t *attr, int pshared)`
+	- 时钟属性
+	    - `int pthread_condattr_getclock(const pthread_condattr_t *restrict attr, int *clock_id)`
+	    - `int pthread_condattr_setclock(pthread_condattr_t *attr, int clock_id)`
+	    - 控制pthread\_cond\_timedwait使用的时钟
+	    - 但是SUS并没有为其它的超时等待函数的属性对象定义时钟属性
+    - 屏障属性
+        - `int pthread_barrierattr_init(pthread_barrierattr_t *restrict attr)`
+	- `int pthread_barrierattr_destroy(pthread_barrierattr_t *attr)`
+	- 目前定义的屏障属性只有进程贡献属性
+	    - `int pthread_barrierattr_getpshared(const pthread_barrierattr_t *restrict attr, int *restirct pshared)`
+	    - `int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared)`
+	        - `PTHREAD_PROCESS_SHARED`:多进程中的多个线程使用
+		- `PTHREAD_PROCESS_PRIVATE`:初始化屏障的那个进程内的多线程使用
+- 重入
+    - 线程安全:如果一个函数在相同时间点可以被多个线程安全地调用
+    - 具体线程不安全的函数见图12\-9
+    - 判断系统是否支持线程安全函数,如果支持，会为POSIX.1中一些不安全函数提供可替代的安全版本
+        - `_POSIX_THREAD_SAFE_FUNCTIONS`
+	- `_SC_THREAD_SAFE_FUNCTIONS`
+    - 标准I/O函数是线程安全的，但不是异步信号安全的；以线程安全的方式管理文件对象，可以使得多个文件操作成为原子操作
+        - `int ftrylockfile(FILE *fp)`
+	- `void flockfile(FILE *fp)`
+	- `void funlockfile(FIEL *fp)`
+	    - 可以递归地获得锁，没有规定具体的实现方式
+	- 如果每次获得锁只是读写一个字符，那么开销就会比较大，替代的方法是先获得文件锁，然后使用不加锁版本的基于字符的标准I/O例程
+	    - `int getchar_unlocked(void)`
+	    - `int getc_unlocked(FILE *fp)`
+	    - `int putchar_unlocked(int c)`
+	    - `int putc_unlocked(int c, FILE *fp)`
+	    - 这些函数不检查锁，都是线程不安全的
+- 线程私有数据(thread-private data)
+    - 线程没有完全私有的数据，因为从底层上线程能够访问整个进程的地址空间，但管理线程私有数据的函数可以提高线程间数据的独立性
+    - `int pthread_key_create(pthread_key_t *keyp, void (*destructor)(void *))`
+        - 在分配线程私有数据前，需要先获得键key，可以将key看成一个二维的数组，通过key和线程ID可以确定唯一的一个地址
+	- keyp保存创建的key，这个key可以被进程内所有的线程访问，因为它还需要通过线程ID来确定地址
+	- 创建新key时，每个线程的数据地址设为空值
+	- destructor为可选的析构函数，其参数为数据地址，正常退出时会被调用
+	    - 调用pthread\_exit或者从例程返回
+	    - 线程取消时，在最后的清理函数返回之后
+	    - 如果线程调用exit、\_exit、\_Exit或abort，或者其他非正常退出就不会调用析构函数
+	- 析构函数的工作通常就是释放malloc给线程私有数据分配的内存
+    - `int pthread_key_delete(pthread_key_t key)`
+        - 取消key与线程私有数据的关联
+        - 不会激活析构函数，那么需要手动释放资源
+    - `int pthread_once(pthread_once_t *initflag, void (*initfn)(void))`
+        - 同一个进程内多个线程只会调用一次
+        - initflag必须是一个非本地变量，必须初始化为`PTHREAD_ONCE_INIT`
+    - `void *pthread_getspecific(pthread_key_t key)`
+        - 如果key没有与当前线程的私有数据相关联，那么返回NULL
+    - `int pthread_setspecific(pthread_key_t key, const void *value)`
+- 取消选项
+    - `int pthread_setcancelstate(int state, int *oldstate)`
+        - 将线程可取消属性设置为state，并将原来的属性保存在oldstate的内存中，这两个步骤是原子操作
+        - `PTHREAD_CANCEL_ENALBE`:线程默认状态
+	- `PTHREAD_CANCEL_DISABLE`:所有的取消请求都会挂起，直到取消状态变为Enable时，线程在下一个取消点上对所有挂起的取消请求进行处理
+    - 取消点
+        - `pthread_cancel`只是发出请求，不会等待线程取消
+	- 线程在取消点才去检查是否收到取消请求
+	- POSIX.1保证在调用图12\-14中的函数时，取消点都会出现，图12\-15是可选的取消点
+	- `pthread_testcancel(void)`
+	    - 自己设置取消点
+	    - 如果当前被挂起的取消请求没有置为无效，那么线程就会被取消
+    - 取消的类型
+        - `int pthread_setcanceltype(int type, int *oldtype)`
+	    - `PTHREADCANCEL_DEFERRED`:推迟取消，默认类型
+	    - `PTHREADCALCEL_ASYNCHRONOUS`:异步取消，线程可以在任意时间取消，不是非得遇到取消点
+- 线程和信号
+    - 每个线程都有自己的信号屏蔽字，但是所有线程共享信号的处理行为
+    - 如果信号是与硬件故障相关，那么信号被传送到引发该事件线程处理；否则信号被发送到任意一个线程
+    - `int pthread_sigmask(int how, const sigset_t *restrict set, sigset_t *restrict oset)`
+        - 如果set为NULL，此时会忽略how，可以用于获取当前线程的信号屏蔽字
+	- 实际使用同sigprocmask
+    - 等待信号出现
+        - `int sigwait(const sigset_t *restrict set, int *restrict signop)`
+	    - 这个函数类似sigsuspend，set指定等待的信号集，signop保存接受信号的编号
+        - sigwait会移除处于挂起的信号，如果支持排队信号，只会移除一个信号实例，其他实例还要继续排队
+        - 在调用sigwait之前需要先阻塞等待的信号，sigwait会原子地取消信号集的阻塞状态，在返回后恢复信号屏蔽字
+        - sigwait把异步信号以同步的方式处理，这样就不需要考虑哪些函数信号安全的，因为此时是同步处理，信号不会随时产生
+	- 可以安排专用的线程处理信号，在其他线程中屏蔽信号
+	- 如果有多个线程在wait同一个信号，只有一个线程可以返回
+	- 如果进程对信号设置了处理程序，同时又有线程在等待信号，那么当信号产生时，操作系统实现可以让sigwait返回，也可以激活信号处理程序，但是两种情况不会同时发生
+    - 发送信号
+        - `int pthread_kill(pthread_t thread, int signo)`
+	    - signo为0时可以检查thread线程是否存在
+	    - 如果信号的默认动作是终止进程，那么把信号传递给线程仍然会杀死整个进程
+	    - 所有线程共用一个闹钟定时器
+- 线程和fork
+    - 在线程中调用fork创建子进程，子进程继承了父进程整个地址空间，包括各种锁，子进程内部只存在一个线程，由父进程调用fork的线程组成
+    - 子进程调用exec函数会替换掉父进程的地址空间，这样就不需要清理锁的状态了
+    - 在多线程进程中，POSIX.1规定子进程在fork之后和调用exec之前只能使用异步信号安全的函数，这样就不涉及子进程中锁状态的问题
+    - 清除锁的状态
+        - `int pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(void))`
+	    - prepare:在fork之前执行，在函数中获取父进程所有的锁
+	    - parent:在fork创建子进程之后，返回之前在父进程上下文中调用的，在函数中释放prepare获得的锁
+	    - child:在fork返回之前在子进程上下文中调用的，在函数中师范prepare获得的锁
+	- `pthread_atfork`的不足之处
+	    - 详见书本370页
+        - 可以多次调用`pthread_atfork`设置多套fork处理程序
+	    - parent和child是以它们注册的顺序进行调用的
+	    - prepare是以注册时的相反顺序调用的
+	- 对于条件变量来说，目前还没有可移植的方法进行清理
+    - 如果希望exec另一个程序那么就需要fork
+- 线程I/O
+    - 进程中的所有线程都共享相同的文件描述符
+    - 解决多线程并发操作同一个文件描述符
+        - pread:原子地lseek和read
+	- pwrite:原子地lseek和write
+
+# 第十三章 守护进程(daemon)
+- 守护进程的特征
+    - 守护进程是一种生存期长，通常在系统引导时启动，在系统关闭时才停止；没有控制终端，后台运行的进程
+    - 大多数守护进程都是以root特权运行
+    - 大多数用户级守护进程都是进程组的组长和会话的首进程，而且是进程组和会话中唯一的进程
+    - 用户级守护进程的父进程都是init进程
+- 编程规则
+    - 调用umask将文件模式创建屏蔽字设置为一个已知值，由继承获得的屏蔽字可能会拒绝某些权限
+    - 调用fork，然后父进程exit，这样做能够
+        - 如果该守护进程是作为一条简单的shell命令启动的(例如./a.out),那么父进程的终止会让shell认为这条命令已经执行完毕
+	- 因为调用setsid要求进程不能是进程组组长，虽然子进程从父进程继承了进程组，但是可以确定子进程不是进程组的组长
+    - 调用setsid创建一个新的会话，setsid函数进行如下的工作，使进程
+        - 成为新会话的首进程
+	- 成为一个新进程组的组长
+	- 没有控制终端
+    - 可以选择再次fork并终止父进程，这样就能够保证子进程不是会话首进程，就不能够获得控制终端，否则每次open文件都要指定`O_NOCTTY`
+    - 更改当前工作目录。因为从父进程继承的当前工作目录可能处于某个挂载的文件系统，守护进程会使得文件系统无法卸载
+    - 关闭不再需要的文件描述符。可以一直关闭直到最高文件描述符值的所有文件
+    - 某些守护进程使文件描述符0,1,2指向/dev/null，因此所有的标准输入、标准输出和标准错误都不会有效果
+- 出错记录
+    - syslog是一个集中的出错记录设施，最早在BSD上出现
+    - 3种产生日志消息的方法
+        - 内核例程调用log函数，任何一个用户进程通过/dev/klog设备来读取消息
+	- 用户进程(守护进程)调用syslog(3)来产生日志消息，消息被发送到/dev/log
+	- 将日志消息发送到UDP端口514，需要用户进程进行显式的网络编程
+    - syslog相关函数
+        - `void openlog(const char *ident, int option, int facility)`
+	    - 可选调用，如果不调用第一次调用syslog函数时会以默认配置调用
+	- `void syslog(int priority, const char *format, ...)`
+	    - priority是facility和loglevel值的组合
+	    - format中的%m都会被替换为errno值对应的strerrno
+	- `void closelog(void)`
+	    - 可选调用，用于关闭与syslog通信的描述符
+	- `int setlogmask(int maskpri)`
+	    - 各条消息除非已在maskpri中进行了设置，否则将不被记录
+	    - 返回值为之前设置的mask
+	- `void vsyslog(int priority, const char *format, va_list arg)`
+	    - arg为可变参数列表
+    - 大多数syslog实现会把短时间内重复的消息合并，只显示一条消息并加上重复次数
+- 单实例守护进程
+    - 某些守护进程只能实现为单实例，比如守护进程需要排他地访问一个设备
+    - 实现守护进程的方法
+        - 如果驱动程序保证只能打开一次设备，那么当运行守护进程的副本时就会失败
+	- 如果没有这样的设备，那么我们自己可以通过文件和记录锁实现
+	    - 每个进程通过创建一个固有名字的文件，并尝试加写锁,因为只允许创建一把写锁，所以就实现了单实例守护进程
+	    - 守护进化终止时会自动删除锁，简化了恢复处理
+- 守护进程惯例
+    - 若守护进程使用锁文件，那么锁文件通常存放在/var/run/目录下，锁文件的命名方式通常是name.pid，name是该守护进程或服务的名字
+    - 若守护进程支持配置选项，那么配置文件通常存放在/etc/下，配置文件的名字通常是name.conf，name是该守护进程或服务的名字
+    - 守护进程可用命令行启动，当它们通常是由系统初始化脚本启动的
+    - 若守护进程有配置文件，为了使修改的配置文件生效，需要重新启动守护进程；可以通过使守护进程处理SIGHUP信号的方式来避免重新启动守护进程
+- 客户进程-服务器进程模型
+    - 在服务器中fork一个子进程然后在子进程中exec一个程序来向客户进程提供服务
+        - 因为子进程继承了父进程中打开的文件，为了避免在被恶意程序利用，需要对子进程不需要的文件设置执行时关闭(close-on-exec)标志
+        - 通过fcntl设置
+
+# 第十四章 高级I/O
+- 非阻塞I/O
+    - 非阻塞I/O使得open、write和read这些I/O操作不会永远阻塞，如果这种操作不能完成则调用会立即出错返回，表示该操作如果继续执行将阻塞
+    - 将文件描述符指定为非阻塞I/O的方法
+        - 在open调用中指定O\_NONBLOCK
+	    - O_NDELAY是早期UNIX版本使用的，新程序不应该使用
+	- 对于一个打开的文件描述符，使用fcntl打开O\_NONBLOCK标志
+    - 文件状态标志的更改影响同一文件表项的所有用户，但与通过其他文件表项对同一设备的访问无关
+    - 终端驱动程序一次能够接受的数据量随系统而变，还与登录系统使用的方式有关
+    - 对非阻塞I/O使用轮询来等待完成在多用户系统上比较浪费CPU
+        - 使用I/O多路转接进行这种操作是比较有效的
+	- 可以将应用程序设计成多线程从而避免使用非阻塞I/O，可以专门创建一条线程用于完成阻塞I/O操作，但是线程之间的同步可能会增加复杂性，导致得不偿失的后果
+- 记录锁(record locking)
+    - UNIX内核中没有文件记录这个概念，更加合适的术语应该是字节范围锁(byte-range locking)
+    - fcntl记录锁
+        - POSIX.1没有指明fcntl记录锁是写者优先还是读者优先
+        - `int fcntl(int fd, int cmd, .../*struct flock *flockptr*/)`
+	    - cmd的取值
+	        - F\_GETLK:判断flockptr描述的锁是否可用，如果可用，那么flockptr的l\_type被设置为F\_UNLCK;否则flockptr会被修改为当前锁的信息
+		    - 不会报告进程自己持有的锁
+		- F\_SETLK:设置flockptr描述的锁，如果根据兼容性规则加锁失败，那么fcntl会立即出错返回
+		- F\_SETLKW:是F\_SETLK的阻塞版本，会一直休眠直到锁可用或者被信号唤醒
+	    - 关于struct flock
+	    ```
+	    struct flock{
+	    	short l_type;	//锁的类型:F_RDLCK(共享读锁), F_WRLCK(独占性写锁), F_UNLCK(解锁)
+		short l_whence;	//SEEK_SET, SEEK_CUR, SEEK_END
+		off_t l_start;	//offset in bytes, relative to l_whence
+		off_t l_len;	//length in bytes, 0 means lock to EOF
+		pid_t l_pid;	//进程ID持有的锁能阻塞当前进程，由F_GETLK返回；如果当前进程持有锁不会返回当前进程ID
+	    };
+	    ```
+	- 加锁和解锁区域的规则
+	    - 锁可以在文件尾或者超过文件尾开始，但是不能在文件头之前，这意味着对于SEEK\_CUR(not equal SEEK_SET)和SEEK\_END,l_start可以是负值
+            - 当l\_len为0时，意味着无论向文件中追加多少数据，都处于加锁的范围
+	    - 为了对整个文件加锁，可以这样设置，将l\_whence=SEEK_SET,l_start=0,l_len=0
+	    - 在设置或释放锁时，系统按照要求组合或分裂相邻区
+	- 加锁规则
+	    - 对于不同进程，同一个文件区间，写锁是独占性的，读锁是共享的
+	    - 对于相同进程，同一个文件区间，新锁总是替换旧锁
+	    - 加读锁时，文件描述符必须是可读的；加写锁时，文件描述符必须是可写的
+    - 记录锁的隐含继承和释放
+        - 锁与进程和文件是相关联的。这意味着进程终止时释放所有记录锁；当关闭文件时，释放该文件的记录锁
+	    - 无论哪一个文件描述符何时关闭，该进程在该文件上的任何一把锁都会释放
+	- 由fork产生的子进程不继承父进程的文件记录锁
+	- 在执行exec后，新程序可以继承原程序的记录锁
+	    - 如果对一个文件描述符指定了close on exec标志，那么exec会关闭该文件描述符，进而释放记录锁
+    - FreeBSD的实现
+        - 前面已经介绍了进程表项、文件表项和v节点表项，v节点中包含了该文件的锁的列表，见图14\-8
+    - 在文件尾端加锁
+        - 当指定l\_whence为SEEK\_CUR或SEEK\_END时要小心，因为这两个位置会随着文件的读写发生变化
+	- 内核在处理l\_whence为SEEK\_CUR或SEEK\_END时会将偏移量转化为相对于SEEK\_SET的绝对位置偏移量
+	- 很多情况下我们都希望能够相对于当前文件长度加锁，但是此时我们没有获得锁因此无法使用fcntl获取文件长度
+    - 建议性锁和强制性锁
+        - 如果进程使用协调一致的方式处理记录锁，则称他们为合作进程，否则为非合作进程
+	- 在合作进程中可以使用建议性锁，在非合作进程中使用强制性锁
+        - 建议性锁没有真正的作用，只是约定了进程读取文件的规范，比如你在read之前要先获得读锁，write之前要先获得写锁，但是你不这么做也可以
+	- 强制性锁内核会检查每一个open、read和write
+	    - 打开强制性锁:对一个普通文件打开设置组ID位，关闭组执行位
+	        - 某些系统不支持强制性锁，对于Linux开启强制性锁需要以mand方式挂载分区
+	    - 强制性锁对阻塞和非阻塞方式I/O影响见图14\-11
+	    - 当open打开一个加了强制性锁的文件时，并且打开标志中设置了O\_TRUNC,那么open会立即返回出错，无论是否指定了O\_NONBLOCK;一般open打开还是成功的
+	    - 强制性锁对于unlink没有影响，意味着可以删除加了强制性锁的文件
+- I/O多路转接(I/O multiplexing)
+    - 实现telnet的方法
+        - 阻塞I/O+两条进程:使得程序非常复杂
+	- 阻塞I/O+两条线程:线程同步复杂
+	- 非阻塞I/O+轮询:效率低
+	- 异步I/O:通过信号通知，但是信号和I/O不能一一匹配，因为信号种类数量有限
+	- I/O multiplexing
+    - 函数select和pselect
+        - `int select(int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict exceptfds, struct timeval *restrict timeout)`
+	    - 参数timeout
+	        - timeout==NULL，如果无信号中断则永久等待；当捕捉到信号时，select返回-1，errno设置为EINTR
+		- timeout->tv_sec==0&&timeout->tv_usec==0:根本不等待，测试所有的描述符然后立即返回
+		- timeout->tv_sec!=0||timeout->tv_usec!=0:等待指定的时间直到有可用的I/O，可以被信号打断
+		- POSIX.1允许select修改timeout的值，因此在函数返回后，你不能希望timeout仍然保持原来的值
+	    - readfds,writefds,exceptfds(异常条件集)
+	        - fd\_set数据类型:由具体实现决定，可能实现为一个字节数组等
+		    - `int FD_ISSET(int fd, fd_set *fdset)`:测试fd是否被设置
+		    - `int FD_CLR(int fd, fd_set *fdset)`:清除fd
+		    - `int FD_SET(int fd, fd_set *fdset)`:设置fd
+		    - `int FD_ZERO(fd_set *fdset)`:将fdset设置为零，使用前都需要调用此函数进行初始化
+		- 这三个参数的任意一个为NULL说明我们不关心对应的条件，如果三个参数都为NULL则select是精度比sleep还高的定时器
+	    - nfds为3个描述符集中最大的描述符加一
+	        -FD\_SETSIZE表示最大的描述符数
+	    - 返回值
+	        - -1:表示出错，可能是捕捉到信号，此时不会修改描述符集
+		- 0:在指定时间内没有准备好的描述符，此时所有描述符集都会置0
+		- 正数:所有描述符集中已经准备好的描述符总数；如果同一个文件描述符在多个描述符集中出现，那么就会被计算多次；此时描述符集中仍然打开的位对应于准备好的描述符
+		    - “准备好”的含义
+		        - 对于readfds，read操作不会阻塞
+			- 对于writefds，write操作不会阻塞
+			- 对于异常exceptfds(条件集),有一个未决的异常条件；异常条件包括网络连接到达的带外数据等
+	                - 当一个文件描述符到达EOF时，select会认为该描述符是准备好的，然后调用read返回0
+			- 一个文件描述符是否阻塞打开不会影响select是否阻塞
+	- `int pselect (int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict exceptfds, const struct timespec *restrict timeout, const sigset_t *restrict sigmask)`
+	    - 除了以下几点，pselect与select相同
+	        - pselect使用timespec，如果平台支持高精度，那么pselect精度更高
+		- pselect不会修改timeout的值
+		- pselect可以原子地设置信号屏蔽字，在返回时恢复信号屏蔽字
+    - 函数poll
+        - `int poll(struct pollfd fdarray[], nfds_t nfds, int timeout)`
+	    - fdarray
+	    ```
+	    struct pollfd{
+	    	int fd;		//关心的文件描述符
+		short events;	//关心的事件
+		short revents;	//发生的事件,关于event的设置查看P408
+	    };
+	    ```
+	    - nfds表示fdarry中元素的个数
+	    - timeout取值
+	        - -1:永远等待，直到捕捉到信号或者描述符准备好了；当捕捉到信号时，poll返回-1，errno设置为EINTR
+		- 0:不等待，测试所有描述符后立即返回
+		- >0:等待timeout毫秒或者被信号打断；等待timeout毫秒后返回准备好的文件描述符数；被信号打断poll返回-1，errno设置为EINTR
+    - 一个文件描述符是否阻塞打开不会影响select和poll是否阻塞，select和poll只会在给定的timeout时间内等待数据准备好或者被信号打断返回
+    - select和poll在多数平台上，即使指定了SA\_RESTART,在被信号打断时也不会自动重启
+- 异步I/O
+    - System V异步I/O
+    - BSD异步I/O
+    - POSIX异步I/O
+        - 引进POSIX异步I/O接口的初衷是为了避免实时应用在执行I/O操作时阻塞进程
+        - struct aiocb的成员
+	    - int aio\_fields:打开用来读或写的文件描述符
+	    - off\_t aio\_offset
+	        - 异步I/O操作必须显式指定偏移量
+		- 异步I/O操作不影响系统维护的文件偏移量
+		- 如果操作的文件是以O\_APPEND模式打开的，该字段会被忽略掉
+	    - voilatile void *aio\_buf
+	        - 对于读操作，数据复制到缓冲区中
+		- 对于写操作，数据从缓冲区复制出来
+	    - size\_t aio\_nbytes:要读或者写的字节数
+	    - int aio_reqprio:为异步I/O请求执行的优先级，但是系统不一定遵循该优先级
+	    - struct sigevent aio\_sigevent
+	        - int sigev\_notify
+		    - SIGEV\_NONE:异步I/O完成后不通知进程
+		    - SIGEV\_SIGNAL:产生sigev\_signo指定的信号；如果信号处理程序指定了SA\_SIGINFO，那么传递给信号处理函数的siginfo结构中的si\_value会被设置为sigev\_value
+		    - SIGEV\_THREAD:由`sigev_notify_function`指定的函数被调用，`sigev_value`作为参数传入，如果`sigev_notify_attributes`由特别设置，否则该函数将由单独线程在分离状态下执行
+		- int sigev\_signo
+		- union sigval sigev\_value
+		- void (*sigev_notify\_function)(union sigval)
+		- pthread_attr\_t *sigev_notify_attributes
+	    - int aio\_lio\_opcode:用于基于列表的异步I/O
+        - 执行异步I/O
+	    - `int aio_read(struct aiocb *aiocb)`
+	    - `int aio_write(struct aiocb *aiocb)`
+	    - 当这些函数成功返回时，异步I/O请求就放入了等待处理队列中
+	    - I/O操作在等待时必须确保AIO控制块和缓冲区的稳定，除非I/O操作完成，否则不能复用
+        - 强制写入持久化存储
+	    - 强制所有等待中的异步操作不等待而写入持久化的存储中
+	    - `int aio_fsync(int op, struct aiocb *aiocb)`
+	        - op可选值
+	            - `O_DSYNC`:就像fdatasync，只会影响数据部分
+		    - `O_SYNC`:类似sync，同步数据和文件的属性
+	    - aiocb同`aio_read`和`aio_write`的参数一样，控制我们如何被通知
+	- 获取异步I/O的状态
+	    - `int aio_error(const struct aiocb *aiocb)`
+	        - 返回0表示异步操作成功完成，需要调用`aio_return`获取返回值
+		- 返回-1表示异步操作失败，errno记录了出错的原因
+		- 返回EINPROCESS表示异步操作或同步操作仍在等待
+	- 获取异步I/O的返回值
+	    - `ssize_t aio_return(const struct aiocb *aiocb)`
+	        - 只有在调用`aio_errno`返回0时才调用且仅调用一次，因为一旦调用该函数，操作系统就会释放该返回值
+	- 阻塞进程进行异步I/O
+	    - 如果进程完成了所有其他的事务，可以调用此函数阻塞进程直到异步I/O完成
+	    - `int aio_suspend(const struct aiocb *const list[], int nitems, const struct timespec *timeout)`
+	        - 返回-1:被信号打断或者在timeout超时没有任何完成的I/O操作
+		- 返回0:在timeout期间由任何的I/O操作完成
+		- 如果list中所有的I/O操作都已完成，那么函数会立即返回
+	- 取消异步I/O
+	    - `int aio_cancel(in fd, struct aiocb *aiocb)`
+	        - fd为将要取消异步操作的文件描述符
+		- 如果aiocb为NULl那么将取消fd上所有的异步操作，否则系统会尝试取消单个异步操作；无法保证系统能够取消正在进程中的任何操作
+		- 返回值
+		    - `AIO_ALLDONE`:所有操作在尝试取消之前已经完成
+		    - `AIO_CANCELED`:所有操作都被取消
+		    - `AIO_NOTCANCELED`:至少由一个操作没有被取消
+		    - -1:调用失败，错误码记录在errno中
+        - 基于列表的I/O操作
+	    - 该函数既能用于同步I/O也可以用于异步的I/O
+	    - `int lio_listio(int mode, struct aiocb *restrict const list[restict], int nitems, struct sigevent *restrict sigev)`
+	        - mode参数决定了I/O操作是同步的还是异步的
+		    - `LIO_WAIT`:同步I/O,函数将在所有I/O操作完成后返回；sigev参数将被忽略
+		    - `LIO_NOWAIT`:异步I/O,sigev将在所有的I/O操作完成后发送，注意每个aiocb可能也启用了各自的异步通知
+		- 通过在每个aiocb中指定`aio_lio_opcode`来指定该操作的类型
+		    - `LIO_READ`:对应的aiocb将被传送到`aio_read`
+		    - `LIO_WRITE`:对应的aiocb将被传送到`aio_write`
+		    - `LIO_NOP`:忽略对应的aiocb
+	    - 实现会对列表I/O做出限制，见图14\-19
+- 函数readv和writev
+    - 用于在一次函数调用中读写多个非连续的缓冲区
+    - `ssize_t readv(int fd, const struct iovec *iov, int iovcnt)`
+    - `ssize_t writev(int fd, const struct iovec *iov, int iovcnt)`
+        - 返回值为已读或已写的字节数,通常应等于所有缓冲区的长度和
+	- struct iovec
+	    - `void *iov_base`
+	    - `size_t iov_len`:受限于`IOV_MAX`
+    - write和writev效率对比:应当使用数量较少的系统调用来完成任务，写少量数据时write可能效率较高，但是从长远考虑还是应该使用wirtev
+- 函数readn和writen(这两个函数是本书作者定义的，并不是哪个标准的组成部分)
+    - 需求来自于当读写管道、FIFO以及某些设备（通常是终端或者网络）时，无论该文件的打开方式是*阻塞还是非阻塞*，我们会遇到
+        - 一次read返回的数据量少于我们指定的数据量，即使还没有到达文件尾
+	- 一次write写入的数据量少于我们指定的数据量，可能是因为写缓冲区填满了
+    - `ssize_t readn(int fd, void *buf, size_t nbytes)`
+    - `ssize_t writen(int fd, const void *buf, size_t nbytes)`
+- 存储映射I/O(memory-mapped I/O)
+    - 将一个磁盘文件映射到存储空间的缓冲区上，这样从缓冲区中读数据就相当于读文件中相应的字节；将数据写入缓冲区相应字节就自动写入文件；可以实现不使用read和write情况下执行I/O
+    - `void *mmap(void *addr, size_t len, int prot, int flag, int fd, off_t off)`
+        - addr:指定映射存储区的起始地址，通常将其设置为0表示由系统选择，实际的地址由返回值确定
+	- len为要映射的字节数
+	- prot指定了映射存储区的保护要求，不能超过open时指定的访问权限
+	    - `PROT_READ`:可读
+	    - `PROT_WRITE`:可写
+	    - `PROT_EXEC`:可执行
+	    - `PROT_NONE`:不可访问
+	- flag:影响映射存储区的多种属性
+	    - `MAP_FIXED`:返回值必须等于addr；不使用此标志时，内核只是把非空的addr作为一种建议；使用此标志不利于可移植
+	    - `MAP_SHARED`:存储操作修改文件，也就是说，存储操作相当于write；可以在多个进程之间共享，作为共享存储的替代方法
+	    - `MAP_PRIVATE`:对映射区的存储操作将创建该映射文件的一个私有副本，所有后来对该映射区的引用都是引用该副本；必须指定`MAP_PRIVATE`或`MAP_SHARED`
+	    - `MAP_XXX`:每种实现特有的标志值
+	- fd为要映射的文件，必须首先打开
+	- off为映射字节在文件起始的偏移量
+	    - 通常被要求为系统虚拟存储页长度的整数倍，页长度可以通过`sysconf(_SC_PAGESIZE)`获得；如果指定了`MAP_FIXED`，那么addr也有此要求
+	    - 如果文件长度没有刚好填充整个映射区，那么余下的映射区会被填充为0，对余下映射区的修改不会写入文件，必须先加长该文件
+    - 与映射区有关的信号
+        - SIGSEGV:指示进程访问对它不可用的存储区；如果进程试图对只读的映射区写入数据也会产生此信号
+	- SIGBUS:如果映射区的某个部分在映射时存在但是访问时不存在将产生此信号
+    - 子进程能够继承父进程的存储映射(因为子进程是复制父进程的地址空间)；exec会装入新程序的地址空间，因此不能继承存储映射
+    - `int mprotect(void *addr, size_t len, int prot)`
+        - addr必须为页长的整数倍
+    - `int msync(void *addr, size_t len, int flags)`
+        - addr必须为页长的整数倍
+	- flags控制如何冲洗存储区，必须指定`MS_ASYNC`或`MS_SYNC`其中一个标志
+	    - `MS_ASYNC`:函数立即返回
+	    - `MS_SYNC`:等待写操作完成后才返回
+	    - `MS_INVALIDATE`:丢弃与存储器没有同步的页
+        - 即使只修改了一页中的一个字节，写回时也是整个页面写回
+	- 如果映射是私有的，那么不修改映射文件
+    - `int munmap(void *addr, size_t len)`
+        - 当进程终止时会自动解除存储映射区的映射，但是关闭文件描述符并不解除映射
+	- munmap只是解除映射，不会将修改写回文件中，解除映射后由内核的虚拟存储算法自动进行文件同步
+	- 在解除映射后，对`MAP_PRIVATE`的存储区修改会被丢弃
+    - 与传统read、write对比
+        - read需要将数据从磁盘复制到内核缓冲区，再从内核缓冲区复制到用户缓冲区，write也类似，有系统调用开销
+	- 使用mmap和memcpy，数据直接从磁盘复制到用户缓冲区，有缺页开销
+    - 存储映射的限制
+        - 不能由于某些设备，例如网络设备或终端设备
+
+# 第十五章 进程间通信(InterProcess Communication, IPC)
+- 管道
+    - 管道的局限性
+        - 历史上的管道是半双工的，虽然现在某些系统提供了全双工管道，但是为了可移植性，我们不应该假定系统支持全双工管道
+	- 管道只能在具有公共祖先的两个进程之间使用
+	- FIFO没有第二种局限性；UNIX domain socket没有这两种局限性
+    - 创建管道
+        - `int pipe(int fd[2])`
+	    - 对于半双工管道，fd[0]以读方式打开，fd[1]以写方式打开，写入fd[1]的数据从fd[0]中读取
+	    - 对于全双工管道，fd[0]和fd[1]是以读写方式打开的
+    - 管道的使用
+        - 父进程创建管道
+	- 父进程通过fork创建子进程，子进程复制了父进程的管道
+	- 父进程和子进程可以通过管道进行通信，可以根据需要关闭对应的管道
+    - 关闭管道
+        - 当read一个写端被关闭的管道时，在所有数据被读取后，read返回0，表示文件结束;只要还有进程对管道持有写打开的文件描述符，就不会导致管道写端关闭
+	    - 如果管道中没有数据，那么read会一直阻塞
+	- 当write一个读端被关闭的管道时，则产生信号SIGPIPE，write返回-1，errno设置为EPIPE
+    - 管道缓冲区的大小
+        - 常量`PIPE_BUF`定义了内核管道缓冲区的大小，当多个进程同时写管道时
+	    - 如果要求写的字节数小于或等于`PIPE_BUF`,那么write操作不会交叉进行
+	    - 否则超过`PIPE_BUF`,write操作会与其他进程交叉进行
+	    - 可以通过pathconf或fpathconf获得`PIPE_BUF`的取值
+- 函数popen和pclose
+    - `FILE *popen(const char *cmdstring, const char *type)`
+        - popen的工作是fork创建子进程，执行cmdstring的程序，根据type将子进程的标准输入或输出通过管道与父进程关联
+	- type的取值
+	    - "r":返回可读的文件描述符
+	    - "w":返回可写的文件描述符
+	- cmdstring是以"shell -c cmdstring"的形式执行的，这意味着shell会扩展cmdstring中的任何特殊字符
+	- 当cmdstring对应的程序不存在时，popen并不会返回NULL
+    - `int pclose(FILE *fp)`
+        - pclose的工作是关闭fp，等待命令执行结束，返回shell的终止状态
+    - 因为在popen中调用了execl并且没有任何防范措施，因此popen不应该被设置用户或组ID的程序调用，就像system一样
+- 协同进程(coprocess)
+    - 当一个程序产生某个过滤程序的输入，又读取该过滤程序的输出，过滤器就变成了协同进程
+    - 相比于popen只能提供一个单向管道，协同进程则有连接到另一个进程的两个单向管道
+    - 需要留意标准I/O的缓冲机制，对于管道是全缓冲的,但是一般协同进程应该使用行缓冲，可以通过setvbuf修改缓冲类型
+        - 如果不能够修改协同进程的代码，那么可以通过伪终端的方式使得协同进程认为它的标准输入输出都连接到了一个终端，终端使用的是行缓冲
+- FIFO
+    - FIFO也被称为命名管道，无名管道只能用于两个相关的进程之间，并且这两个相关的进程还要有一个共同的祖先
+    - FIFO是一种文件类型
+    - 创建FIFO类似于创建文件
+        - `int mkfifo(const char *path, mode_t mode)`
+	- `int mkfifoat(int fd, const char *path, mode_t mode)`
+	    - mode参数的取值同open
+    - 打开FIFO文件:创建完FIFO文件后需要用open打开
+        - 没有指定`O_NONBLOCK`:只读的open会一直阻塞到其他进程为写而打开该FIFO文件，只写的open也如此
+	- 指定`O_NONBLOCK`:只读的open会立即返回；只写的open如果没有其他进程为读而打开该FIFO文件，那么open返回-1
+	- POSIX.1没有定义为读写打开的FIFO
+    - 读写FIFO文件
+        - 如果写一个尚未有进程为读打开的FIFO文件时，产生信号SIGPIPE
+	- 如果读一个尚未有进程为写打开的FIFO文件时，返回文件结束标志
+	- 类似于管道，`PIPE_BUF`指定了可被原子写到FIFO的最大数据量，如果超过这一数值，进程间的写入就会交叉进行
+    - 用途
+        - shell命令使用FIFO复制数据时，无需创建临时文件
+	```
+	mkfifo fifo
+	prog3 <fifo
+	prog1 <infile | tee fifo | prog2
+	```
+	- 使用FIFO进行客户进程-服务器进程通信
+	    - 服务器如何标识一个客户进程:为每个客户进程维护专用的FIFO文件
+	    - 服务器无法判断一个客户进程终止，这会导致专用的FIFO文件遗留在文件系统中
+	    - 详细见课本P448
+- XSI IPC
+    - XSI IPC包括消息队列、信号量和共享存储；XIS IPC由于使用自己的命名空间而不使用文件系统命名空间，经常受到批评
+    - 标识符和键
+        - 标识符:内核使用一个非负整数标识每个IPC对象；与文件描述符不同的是，标识符的大小会随着IPC结构的创建和删除*不断递增*直到溢出重新变为0
+	- 键:标识符是IPC对象的内部名，为了使多个进程能够使用同一个IPC对象，每个IPC对象都与一个key关联，将这个key作为该对象的外部名
+	    - 键的类型用key_t表示，通常被定义为长整型
+	- 无论何时创建IPC对象，都应该指定一个键
+	- 客户进程和服务器进程在同一IPC结构上汇聚(详见P448)
+	    - 使用`IPC_PRIVATE`键创建一个新的IPC结构
+	    - 在一个公用的头文件中定义客户进程和服务器进程都认可的键
+	    - 通过ftok将路径名和ID名转换为键
+	- `key_t ftok(const char *path, int id)`
+	    - path必须引用一个现有的文件
+	    - 函数只使用id的低八位
+	    - *当path不同时，相同的id可能会产生相同的键*
+	- 对于msget、semget和shmget
+	    - 每个函数都有两个类似的参数，key和flag
+	    - 如果为了创建一个IPC结构，flag必须包含`IPC_CREAT`,否则只是引用一个现有的队列
+	    - 绝不能指定`IPC_PRIVATE`来引用现有队列，因为这个键值总是用于创建新的队列，为了引用`IPC_PRIVATE`创建的IPC结构，必须要知道相关的标识符
+	    - 为了确保使用key创建一个新的IPC结构，必须在flag中同时指定`IPC_CREAT`和`IPC_EXCL`
+    - 权限结构
+        - `struct ipc_perm`规定了IPC结构的权限和所有者
+	- 创建IPC结构时，会对权限结构赋初值；IPC结构的创建者和超级用户可以调用msgctl、semctl或shmctl修改uid、gid和mode字段
+	- mode字段和文件的mode类似，但是对于IPC结构没有执行权限
+	    - 用户读、写(更改)
+	    - 组读、写(更改)
+	    - 其他读、写(更改)
+    - 结构限制
+        - 所有三种形式的XSI IPC都有内置限制，大多数限制可以通过重新配置内核来改变
+	- Linux可通过ipcs -l来显示IPC相关限制
+    - 优点和缺点
+        - IPC结构是在系统范围内起作用的，没有引用计数，因此需要显式的资源回收
+	    - 当最后一个引用管道的进程终止时，管道就被完全删除了
+	    - 当最后一个引用FIFO的进程终止时， FIFO文件虽然还存在，但是其中的数据已被删除了
+	- IPC结构在文件系统中没有名字，不能使用文件函数访问它们，需要新增系统调用
+	- IPC结构不能使用I/O多路转接函数
+	- 对于消息队列而言，是可靠的、流控制的、面向记录的
+- 消息队列
+    - 消息队列是消息的链接表，存储在内核中，由消息队列标识符标识
+    - 每个队列都有一个`struct msqid_ds`结构与其关联
+    - `int msgget(key_t key, int flag)`
+        - 创建新队列和初始化一起完成
+	- 返回消息队列的描述符
+    - `int msgctl(int msgid, int cmd, struct msqid_ds *buf)`
+        - cmd参数指定了对msgid要执行的命令
+	    - `IPC_STAT`:取消息队列的`struct msqid_ds`存放在buf中
+	    - `IPC_SET`:将buf的属性设置到消息队列
+	        - 只可以修改`msg_perm.uid`,`msg_perm.gid`,`msg_perm.mode`,`msg_qbytes`(超级用户可以修改)
+		- 消息队列的创建者、拥有者或超级用户才可以执行此命令
+	    - `IPC_RMID`:*立即删除*消息队列以及仍在队列中的数据
+	        - 仍在使用此消息队列的进程会得到EIDRM错误
+		- 消息队列的创建者、拥有者或超级用户才可以执行此命令
+    - `int msgsnd(int msqid, const void *ptr, size_t nbytes, int flag)`
+        - ptr指向自己定义的消息结构，应该包含表示消息类型的long字段和消息的内容，例如
+        ```
+        struct mymsg{
+       	 long mtype;	//mtype一定是正数，接受者才可以使用消息类型以非先进先出的次序取消息，注意long类型会遇到跨平台问题;
+	 char mtext[512];
+        };
+        ```
+        - 当flag指定`IPC_NOWAIT`,发送消息时无论成功与否不阻塞；否则进程会一直阻塞到有空间可以容纳要发送的消息，或从系统中删除此队列，或被信号打断
+    - `ssize_t msgrcv(int msqid, void *ptr, size_t nbytes, long type, int flag)`
+        - ptr指向我们分配的缓冲区，用来保存消息类型和消息内容
+	- nbytes指定了缓冲区的长度
+        - type指定想要的消息类型
+	    - type==0:返回队列中的第一个消息
+	    - type>0:返回类型为type的第一个消息
+	    - type<0:返回队列中消息类型小于等于type绝对值的消息，如果这种消息有多个，则取类型值最小的消息
+	- flag
+	    - `MSG_NOERROR`:如果指定此标志，当消息长度超过nbytes指定的值时静默地截断消息，消息剩余部分被丢弃；否则函数调用失败，消息仍然在队列中
+            - `IPC_NOWAIT`:接受消息时无论成功与否不阻塞；否则进程会一直阻塞到指定类型的消息可用，或从系统中删除此队列，或被信号打断
+    - 与其他形式的IPC相比，消息队列在速度方面已经没有任何优势，考虑到使用消息队列遇到的问题，*在新的应用程序中不应当再使用它们*
+- 信号量
+    - 信号量是一个计数器，用于为多个进程提供对共享数据对象的访问
+    - XSI信号量的复杂性
+        - 信号量并非是单个非负值而是一个或多个信号量的集合
+	- 信号量的创建和初始化不是原子的
+	- 即使没有进程正在使用信号量，它们仍然存在，这是XSI IPC的通病
+    - 内核为每个信号量集合维护一个`struct semid_ds`
+    - 每个信号量由一个无名结构表示
+    - 影响信号量集合的系统限制,见图15\-26
+    - `int semget(key_t key, int nsems, int flag)`
+	- 当创建新的信号量集合时，函数会初始化`struct semid_ds`
+        - nsems:当创建新的信号量集合时，指定了集合中元素的个数；当引用一个现有集合时，该值一般为0
+    - `int semctl(int semid, int semnum, int cmd, .../*union semun arg*/)`
+        - semid取值为0~nsems-1，表示要操作哪个信号量
+	- cmd的取值
+	    - `IPC_STAT`:取信号量集合的`struct semid_ds`存放在arg.buf中
+	    - `IPC_SET`:按照arg.buf的值设置`sem_perm.uid`,`sem_perm.gid`,`sem_perm.mode`
+		- 信号量集合的创建者、拥有者或超级用户才可以执行此命令
+	    - `IPC_RMID`:*立即删除*消息队列以及仍在队列中的数据
+	        - 仍在使用此消息队列的进程会得到EIDRM错误
+		- 信号量集合的创建者、拥有者或超级用户才可以执行此命令
+	    - `GETVAL`:返回成员semnum的semval值
+	    - `SETVAL`:设置成员semnum的semval值，该值由arg.val指定
+	    - `GETPID`:返回成员semnum的sempid值
+	    - `GETNCNT`:返回成员semnum的semncnt值
+	    - `GETZCNT`:返回成员semnum的semzcnt值
+	    - `GETALL`:取该集合中所有信号量值，存储在arg.array指向的数组
+	    - `SETALL`:设置该集合所有信号量值为arg.array数组的值
+	- semun:应用程序需要定义此结构，注意此参数不是指针
+    - `int semop(int semid, struct sembuf semoparray[], size_t nops)`
+        - semoparray指向信号量操作的sembuf数组
+	```
+	struct sembuf{
+		unsigned short sem_num;	//要操作哪一个信号量
+		short sem_op;		//操作的类型
+		short sem_flag;		//IPC_NOWAIT,SEM_UNDO
+	};
+	```
+	- 关于信号量调整值
+	    - 如果设置了`SEM_UNDO`，那么内核就会记住分配了多少资源给进程，记录为信号量调整值；当进程退出时，内核会检查该进程是否还有尚未处理的信号量调整值，如果有，则按调整值对相应信号量值进行处理
+	    - 如果用带SETVAL或SETALL命令的semctl设置一个信号量的值，那么所有进程在该信号量调整值上将设置为0
+	- 关于`sem_op`的取值
+	    - 为正值对应于释放资源数，该值会加到信号量的值上；如果指定了undo标志，从该进程的信号量调整值中减去`sem_op`
+	    - 为负值表示要获取资源数
+	        - 若该信号量的值大于或等于`sem_op`,从信号量的值减去`sem_op`；如果指定了undo标志，从该进程的信号量调整值中加上`sem_op`
+		- 若该信号量的值小于`sem_op`的绝对值,则适用以下条件
+		    - 若指定了`IPC_NOWAIT`，semop出错返回EAGAIN
+		    - 否则该信号量的semncnt值加1，然后调用进程被挂起直到下列事件之一发生
+		        - 该信号量的值变成大于或等于`sem_op`的绝对值，此信号量的semncnt减1，并从信号量值减去`sem_op`的绝对值；如果指定了undo标志，就在该进程的此信号量调整值上加上`sem_op`的绝对值
+			- 从系统中删除了此信号量，semop出错返回EIDRM
+			- 被信号打断，此信号量的semncnt减1，semop出错返回EINTR
+	    - 为0表示调用进程希望等待信号量值变为0
+	        - 若该信号量值为0，semop立即返回
+		- 若该信号量值不为0， 则适用以下条件
+		    - 指定了`IPC_NOWAIT`...
+		    - 否则该信号量的semzcnt值加1，然后调用进程挂起直到下列事件之一发生
+		        - 信号量的值变为0，此信号量的semzcnt减1
+			- 从系统中删除了此信号量，semop出错返回EIDRM
+			- 被信号打断，此信号量的semzcnt减1，semop出错返回EINTR
+	- nops表示semoparray的长度
+	- semop函数具有原子性，它要么执行数组中的所有操作，要么一个也不做
+    - 信号量、记录锁和互斥量的时间比较
+        - 在Linux平台上，记录锁比信号量速度更快，如果能够单一资源加锁，并且不需要信号量花哨的功能，那么记录锁比信号量好
+	- 虽然共享存储的互斥量最快，但是考虑到互斥量恢复一个终止进程很难，因此除非特别考虑性能，还是记录锁比较好
+- 共享存储
+    - 共享存储是一种最快的IPC，使用共享存储时要掌握的唯一窍门是在多个进程之间需要同步访问一个给定的存储区；信号量用于同步共享存储访问
+    - 内核为每个共享存储维护着一个`struct shmid_ds`
+    - 影响共享存储的系统限制，见图15\-30
+    - `int shmget(key_t key, size_t size, int flag)`
+        - 当创建新的共享存储时，自动初始化`struct shmid_ds`
+	- 参数size是该共享存储段的长度
+	    - 以字节为单位，实现上通常将其向上取整为页长的整数倍，但是最后一页剩下的部分不可使用
+	    - 当创建一个新段时必须指定size；当引用一个段时size设置为0
+	- 新创建段的内容初始化为0
+    - `int shmctl(int shmid, int cmd, struct shmid_ds *buf)`
+        - cmd的取值
+	    - `IPC_STAT`:取此段的`struct shmid_ds`,将其存储在buf中
+	    - `IPC_SET`:按照buf的值设置`shm_perm.uid`,`shm_perm.gid`,`shm_perm.mode`
+		- 共享存储的创建者、拥有者或超级用户才可以执行此命令
+	    - `IPC_RMID`:从系统删除该共享存储段
+	        - 因为每个共享存储都维护着一个连接计数，所以除非解除最后一个连接，否则系统不会实际删除该共享存储段
+		- 共享存储的标识符会立即删除，因此不能够使用shmat函数建立新的连接
+		- 共享存储的创建者、拥有者或超级用户才可以执行此命令
+	    - `SHM_LOCK`和`SHM_UNLOCK`:不是SUS的组成部分，加解锁共享存储段，只能由超级用户执行
+    - `void *shmat(int shmid, const void *addr, int flag)`
+        - 如果addr为0，则此段连接到内核选择的第一个可用的地址上
+	- 如果addr非0并且没有指定`SHM_RND`,则此段连接到addr地址上
+	- 如果addr非0并且指定`SHM_RND`,则此段连接到addr取整的地址上
+        - 如果程序计划在多种硬件上运行，那么addr应该取0，以便由系统选择地址
+	- 如果flag指定了`SHM_RDONLY`,则以只读的方式连接此段，否则以读写的方式连接此段
+	- 函数的返回值是连接到此段的实际地址；如果失败返回-1，否则与该存储段相关的`struct shmid_ds`中的`shm_nattch`计数器值加1
+    - `int shmdt(const void *addr)`
+        - 进程结束时会自动断开连接
+        - 当对共享存储段的操作已经结束时，则调用此函数与该段分离，但是这并不会导致从系统删除共享存储，直到某个进程以命令`IPC_RMID`调用shmctl删除它
+	- addr参数是以前调用shmat的返回值，如果成功，该函数将使`struct shmid_ds`结构中的`shm_nattch`计数器值减1
+    - 与mmap类似，由系统选择的共享存储的地址位于栈和堆之间，mmap与文件相关，但是共享存储则没有这种关系
+    - 如果共享存储的进程是相关的，某些实现(例如Linux)提供了另外的方法，对/dev/zero的存储映射来达到共享的目的
+    - 匿名存储映射不需要创建文件，得到的区域是匿名的，通过在mmap指定flag包含`MAP_ANON`标志，将文件描述符设置为-1即可
+    - 在两个无关的进程之间共享存储段的方法
+        - 使用XSI的共享存储
+	- 通过mmap将同一个文件映射到它们的地址空间，并使用`MAP_SHARED`标志
+- POSIX信号量
+    - POSIX信号量接口意在解决XSI信号量接口的几个缺陷
+        - POSIX信号量具有更高的性能
+	- POSIX信号量没有信号量集，接口模仿了熟悉的文件系统
+	- POSIX信号量直到该信号量的最后一次引用被释放时才真正被删除
+    - POSIX信号量的分类
+        - 无名信号量:只存在于内存中，类似于无名管道，只能在有关联的进程中使用，例如父子进程或通过共享存储映射
+	- 命名信号量:可以通过名字访问，因此可以被任何已知它的名字的进程使用
+    - `sem_t *sem_open(const char *name, int oflag, ... /*mode_t mode, unsigned int value*/)`
+	- 若成功，返回指向信号量的指针；若出错，返回`SEM_FAILED`
+	- 参数name，为了可移植性，应该遵循下列规则
+	    - name的第一个字符应该是斜杠/
+	    - name不应该包含其他的斜杠
+	    - 信号量名字的最大长度的限制为`_POSIX_NAME_MAX`
+	- oflag可选`O_CREAT`或`O_EXCL`，作用与open类似
+	- mode只能在创建信号量时使用，指定信号量的权限，与文件权限相同，可以被文件创建屏蔽字修改；当我们打开现有信号量时不允许指定权限，一般实现为以读和写打开
+	- value参数在创建信号量时用来初始化信号量的值，取值范围为0~`SEM_VALUE_MAX`
+    - `int sem_close(sem_t *sem)`
+        - 如果进程没有调用此函数而退出，内核也会自动关闭任何打开的信号量
+	- `sem_close`没有类似XSI UNDO的机制，不会影响信号量值的状态
+    - `int sem_unlink(const char *name)`
+        - 删除信号量的名字，信号量的销毁会一直延迟到最后一个打开的引用关闭
+    - 等待信号量计数减1
+	- `int sem_trywait(sem_t *sem)`
+        - `int sem_wait(sem_t *sem)`
+	    - 阻塞进程直到信号量成功减1或者被信号中断返回
+	- `int sem_timedwait(sem_t *restrict sem, const struct timespec *restict tsptr)`
+	    - 超时时间基于`CLOCK_REALTIME`
+    - `int sem_post(sem_t *sem)`
+        - 唤醒阻塞在该信号量的进程并且被`sem_post`加1的信号量会再次被减1
+    - `int sem_init(sem_t *sem, int pshared, unsigned int value)`
+        - pshared表明是否在多个进程中共享信号量，将其设置为非0值表示共享，并且需要确保sem位于两个进程共享的内存范围内
+	- value指定信号量的初始值
+    - `int sem_destroy(sem_t *sem)`
+        - 调用`sem_destroy`之后不能再使用任何带有sem的信号量函数，除非通过`sem_init`重新初始化它
+    - `int sem_getvalue(sem_t *restrict sem, int *restrict valp)`
+        - valp指向的整数值为信号量值，注意刚读出来值的时候，信号量值可能已经改变了，因此除非使用额外的同步机制，该函数只能用来调试
+- 客户进程-服务器进程属性
+    - 第一种类型是客户进程fork并exec服务程序，子进程为服务器进程
+        - 这种类型可以构建一个open服务器进程，它为客户进程打开文件而不是客户进程自己调用open； 因为exec并不会改变进程的实际用户ID，所以在子进程中的服务程序可以非常方便地进行权限检查
+	- 缺点是子进程不能向父进程传递文件描述符
+    - 第二种类型是将服务器进程作为守护进程，多个客户进程通过IPC与服务器进程通信
+        - 最大的问题是服务器进程标志客户进程
+	    - 对于FIFO，客户进程创建一个只有用户读、写权限的FIFO，将此FIFO的标志传递给服务器进程，服务器进程通过stat检查FIFO的所有者作为客户进程的有效用户
+	    - 对于XSI IPC，客户进程创建一个只有用户读、写权限的IPC结构，服务器进程将IPC结构的`ipc_perm`中的创建者cuid作为客户进程的有效用户
+	    - 在17.3节中将学习到进行这种身份验证更好的方法
+- 小结
+    - 要学会使用管道和FIFO，这两种基础技术可有效地应用于大量程序
+    - 在新的应用程序中避免使用消息队列以及信号量，应该考虑全双工管道和记录锁，它们使用起来会简单很多
+    - 共享存储仍然有它的用途，虽然mmap也可以实现同样的功能
+
+# 第十六章 网络IPC:套接字
+    - 套接字描述符
+        - 套接字(socket)是通信端点的抽象,也是文件的一种；正如文件通过文件描述符访问，套接字则通过套接字描述符访问
+    - `int socket(int domain, int type, int protocol)`
+        - 参数domain确定通信特性，POSIX.1规定的可选值为(AF表示Address Family)
+	    - `AF_INET`：IPv4因特网
+	    - `AF_INET6`：IPv6因特网
+	    - `AF_UNIX`：UNIX域
+	    - `AF_UNSPEC`：代表任何域
+	- 参数type确定套接字的类型，POSIX.1规定的可选值为(具体实现中可以自由增加其他类型)
+	    - `SOCK_DGRAM`：固定长度的、无连接的、不可靠的报文传递
+	        - 对等进程之间不需要建立逻辑连接
+	    - `SOCK_RAW`：IP协议的数据报接口
+	        - 绕过传输层，直接访问网络层，应用程序需要构造自己的协议
+		- 创建原始套接字需要超级用户权限
+	    - `SOCK_SEQPACKET`：固定长度的、有序的、可靠的、面向连接的报文传递
+	        - 与`SOCK_STREAM`的不同点是提供报文服务，这意味着一次接受的数据量与对方发送的一致
+	    - `SOCK_STREAM`：有序的、可靠的、双向的、面向连接的字节流
+	        - 对等进程需要建立逻辑连接
+		- 因为提供的是字节流的服务，所以应用程序分不清报文的界限，这意味着可能需要若干次调用才能获得发送过来的所有数据
+	- 参数protocol通常为0，表示为给定域和套接字类型选择默认协议(在`AF_INET`，`SOCK_STREAM`默认协议为TCP,`SOCK_DGRAM`为UDP)，为因特网域套接字定义的协议如下
+	    - `IPPROTO_IP`：IPv4网际协议
+	    - `IPPROTO_IPv6`：IPv6网际协议
+	    - `IPPROTO_ICMP`：因特网控制报文协议(Internet Control Message Protocol)
+	    - `IPPROTO_RAW`：原始IP数据包协议
+	    - `IPPROTO_TCP`：传输控制协议
+	    - `IPPROTO_UDP`：用户数据报协议(User Datagram Protocol)
+    - 文件描述符函数使用套接字时的行为见图16\-4
+    - `int shutdown(int sockfd, int how)`
+        - how:`SHUT_RD`(关闭读端),`SHUT_WR`(关闭写端),`SHUT_RDWR`(关闭读写)
+	- 只有当关闭最后一个套接字描述符时close才会释放该套接字，而shutdown与引用的套接字描述符数量无关，另外shutdown可以关闭传输的一个方向
+- 寻址
+    - 标识目标通信进程：通过网络地址确定通信的计算机，通过端口号确定该计算机上的服务
+    - 字节序
+        - 大小端
+	- 网络协议指定了字节序，因此异构计算机之间可以交换数据而不会混淆
+	- 对于TCP/IP应用程序，以下函数用来在处理器字节序和网络字节序之间转换
+	    - `uint32_t htonl(uint32_t hostint32)`
+	    - `uint16_t htons(uint16_t hostint16)`
+	    - `uint32_t ntohl(uint32_t netint32)`
+	    - `uint16_t ntohs(uint16_t netint16)`
+    - 地址格式
+        - 地址格式与特定的通信域domain相关，不同格式地址都会强制转换成一个通用的地址格式`struct sockaddr`传入到套接字函数中
+	    - 在`AF_INET`中，地址格式使用`struct sockaddr_in`表示
+	    - 在`AF_INET6`中，地址格式使用`struct sockaddr_in6`表示
+	- 二进制地址格式与点分十进制地址格式转换
+	    - `const char *inet_ntop(int domain, const void *restrict addr, char *restrict str, socklen_t size)`
+	        - domain只能取`AF_INET`,`AF_INET6`
+		- size表示str的大小，对于IPv4可以使用`INET_ADDRSTRLEN`,IPv6可以使用`INET6_ADDRSTRLEN`来定义足够大的空间存放
+	    - `int inet_pton(int domain, const char *restrict str, void *restrict addr)`
+	        - domain只能取`AF_INET`,`AF_INET6`
+		- 对于IPv4，addr需要32位；对于IPv6，addr需要128位
+    - 地址查询
+        - 获取给定计算机系统的主机信息
+	    - `struct hostent *gethostent(void)`
+	        - 如果主机数据库文件没有打开，该函数会打开文件，返回文件中的下一个条目
+		- 返回值是一个静态结构，每次调用函数都会覆盖该结构
+	    - `void sethostent(int stayopen)`
+	        - 如果文件没有打开，就打开文件，否则rewind文件
+		- stayopen设置为非0值表示调用gethostent后文件仍然保持打开状态
+	    - `void endhostent(void)`
+	        - 关闭文件
+	- 获取网络名字和网络编号
+	    - `struct netent *getnetbyaddr(uint32_t net, int type)`
+	    - `struct netent *getnetbyname(const char *name)`
+	    - `struct netent *getnetent(void)`
+	    - `void setnetent(int stayopen);`
+	    - `void endnetent(void)`
+	- 协议名字和协议编号映射
+	    - `struct protoent *getprotobyname(const char *name)`
+	    - `struct protoent *getprotobynumber(int proto)`
+	    - `struct protoent *getprotoent(void)`
+	    - `void setprotoent(int stayopen)`
+	    - `void endprotoent(void)`
+	- 服务名和端口号映射
+	    - `struct servent *getservbyname(const char *name, const char *proto)`
+	    - `struct servent *getservbyport(int port, const char *proto)`
+	    - `struct servent *getservent(void)`
+	    - `void setservent(int stayopen)`
+	    - `void endservent(void)`
+	- 主机名服务名和地址之间映射
+	    - `int getaddrinfo(const char *restrict host, const char *restrict service, const struct addrinfo *restrict hint, struct addrinfo **restrict res)`
+	        - host可以是一个节点名或者点分十进制格式的地址
+		- hint是用来过滤地址的模板
+		- res为链表结构
+	    - `void freeaddrinfo(struct addrinfo *ai)`
+	        - 释放getaddrinfo函数返回的res
+	    - `const char *gai_strerror(int error)`
+	        - 如果getaddrinfo出错，不能使用strerror或perror函数来生成错误信息
+	    - `int getnameinfo(const struct sockaddr *restrict addr, socklen_t alen, char *restrict host, socklen_t hostlen, char *restrict service, socklen_t servlen, int flags)`
+    - 将套接字与地址关联
+        - `int bind(int sockfd, const struct sockaddr *addr, socklen_t len)`
+	    - 在进程正在运行的计算机上，指定的地址必须有效，不能指定一个其它机器上的地址
+	    - 地址必须和创建套接字时的地址族所支持的格式相匹配
+	    - 地址中的端口号必须不小于1024，除非进程具有超级用户特权
+	    - 一般只能将一个套接字绑定到一个给定地址上，尽管有些协议允许多重绑定
+	    - 如果调用connect或listen但是没有将地址绑定到套接字上，系统会选一个地址绑定到套接字上
+	- `int getsockname(int sockfd, struct sockaddr *restrict addr, socklen_t *restrict alenp)`
+	    - alenp指定地址缓冲区的大小，在返回时会被修改为实际的大小，如果地址和提供的缓冲区不匹配，会自动截断而不报错
+	    - 如果当前没有地址绑定到套接字上，其结果是未定义的
+	- `int getpeername(int sockfd, struct sockaddr *restrict addr, socklen_t *restrict alenp)`
+	    - 如果socket已经和对等方连接，可以调用此函数来获得对方的地址
+	    - 与getsockname的不同之处在于此函数是获得对方的地址
+- 建立连接
+    - `int connect(int sockfd, const struct sockaddr *addr, socklen_t len)`
+        - 如果sockfd没有绑定到一个地址，那么会给调用者绑定一个默认地址
+	- addr为想要连接的服务器地址
+        - connect函数可能会失败，因此要进行重试
+        - 可以使用poll或select等待描述符何时可写，如果可写连接完成
+	- 如果用`SOCK_DGRAM`套接字调用connect，传送报文的目标地址会设置成connect指定的addr，这样每次传送报文时就不需要再提供地址，另外仅能接受来自该地址的报文
+    - `int listen(int sockfd, int backlog)`
+        - 服务器调用listen来宣告它愿意接受链接
+	- backlog指示系统该进程所要入队的未完成连接请求的数量，*但其实际值由系统决定*，上限由SOMAXCONN指定
+	- 一旦队列满，系统就会拒绝多余的连接请求
+    - `int accept(int sockfd, struct sockaddr *restrict addr, socklen_t *restrict len)`
+        - 函数返回的套接字描述符连接到调用connect的客户端，和原始套接字描述符(sockfd)具有相同的套接字类型和AF，但sockfd继续保持可用状态并接受其他连接
+	- addr存放客户端的地址，len保存实际的地址长度
+	- 如果sockfd是非阻塞的，没有请求时会立即返回；否则会一直阻塞到一个请求到来
+	- 可以使用poll或select等待一个请求到来，如果描述符可读请求到来
+- 数据传输
+    - 可以使用read和write函数来接收和发送数据，对于`SOCK_DGRAM`类型的套接字需要使用connect指定默认地址
+    - `ssize_t send(int sockfd, const void *buf, size_t nbytes, int flags)`
+        - sockfd必须已经连接
+	- 图16\-13总结了flags标志
+	- send成功返回只能保证数据准确无误地发送到网络驱动程序上
+	- 对于支持报文边界协议，如果尝试发送单个报文长度超过协议支持的最大长度，send会失败
+	- 对于字节流协议，send会阻塞直到数据传输完成
+    - `ssize_t sendto(int sockfd, const void *buf, size_t nbytes, int flags, const struct sockaddr *destaddr, socklen_t destlen)`
+        - 用于发送无连接报文
+        - 对于面向连接的套接字，在连接时已经隐含了目标地址；对于无连接的套接字，除非使用connect设置目标地址，否则不能使用send函数
+    - `ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags)`
+        - 多重缓冲区传送数据
+    - `ssize_t recv(int sockfd, void *buf, size_t nbytes, int flags)`
+        - 图16\-14总结了flags标志
+	- 如果发送者调用shutdown来结束传输，当所有数据接收完毕后，recv返回0
+    - `ssize_t recvfrom(int sockfd, void *restrict buf, size_t len, int flags, struct sockaddr *restrict addr, socklen_t *restrict addrlen)`
+        - 该函数通常用于无连接套接字，否则recvfrom等同recv
+    - `ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags)`
+        - 返回时msg的`msg_flags`会被设为所接收数据的各种特征
+    - 面向连接和面向无连接的套接字
+        - 面向无连接的套接字不能保证数据包按序到达，如果一个数据包不能存放所有数据，那么就必须考虑顺序问题
+	- 面向无连接的套接字数据包可能会丢失
+	- 面向连接的套接字缺陷在于需要消耗更多的资源，更多的时间和工作来建立一个连接
+- 套接字选项
     - 
