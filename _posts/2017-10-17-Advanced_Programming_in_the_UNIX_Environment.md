@@ -154,7 +154,7 @@ categories: 笔记
 - 函数fcntl:如果失败所有命令都返回-1，成功则返回其他值
     - 复制一个已有的描述符(F\_DUPFD,F\_DUPFD\_CLOEXEC)
     - 获取/设置文件描述符标志(F\_GETFD,F\_SETFD),记住要防止丢失之前的设置值
-    - 获取/设置文件状态标志(F\_GETFL,F\_SETFL)，记住要防止丢失之前的设置值
+    - 获取/设置文件状态标志(F\_GETFL,F\_SETFL)，记住要防止丢失之前的设置值;file access mode和file creation flags不能够设置
     - 获取/设置异步I/O所有权(F\_GETOWN,F\_SETOWN)
     - 获取/设置记录锁(F\_GETLK,F\_SETLK,F\_SETLKW)
 - 函数ioctl
@@ -367,8 +367,8 @@ st\_ctim|inode状态的最后更改时间|chmod、chown|-c
     - 在更换工作目录前，通过getcwd保存，之后再通过chdir恢复；对于fchdir来说，只需要保存工作目录的文件描述符即可恢复
 - 设备特殊文件
     - 设备号由主设备号和次设备号组成
-    - st\_dev:文件所在文件系统对应的设备号
-    - st\_rdev:只有字符特殊文件和块特殊文件才有此值，表示实际设备的设备号
+    - st\_dev:文件所在文件系统对应的设备号,包括了主设备号和次设备号
+    - st\_rdev:只有字符特殊文件和块特殊文件才有此值，表示实际设备的设备号，包括了主设备号和次设备号
 - 文件访问权限位小结
     - 总共12个权限位
 - 练习
@@ -732,11 +732,12 @@ st\_ctim|inode状态的最后更改时间|chmod、chown|-c
 - 函数system
     - 因为system实际调用了fork、exec和waitpid三个函数，不同情况返回值不同
     - 设置用户ID或设置组ID的程序决不应调用system，因为system的实现会在fork和exec后保留权限
-- 进程会记:会计记录需要的数据由内核保存在进程表中，在新进程被创建时初始化，终止时写一个会计记录到文件中
+- 进程会计:会计记录需要的数据由内核保存在进程表中，在新进程被创建时初始化，终止时写一个会计记录到文件中
     - 不能获取永不终止进程的会计记录
     - 会计文件中记录的顺序对应进程的终止顺序，但是不能通过会计文件获取精确的启动顺序
     - 一个进程sleep的时间总是不精确的
     - ac\_stat成员记录的并不是进程真正的终止状态
+    - 通过accton命令启用进程会计
 - 用户标识
     - getpwuid可以通过uid获得用户的登录名，但是一个用户可能有多个登录名
     - getlogin可以返回当前用户的登录名，然后可以用getpwnam在口令文件中查找用户的相应记录；在demon中调用此函数返回NULL,但是每个平台都有自己的实现方式，可能会返回用户名
@@ -836,13 +837,13 @@ st\_ctim|inode状态的最后更改时间|chmod、chown|-c
     - SIGHUP:如果终端接口检测到连接断开，则将此信号发送给会话首进程；如果连接的终端是本地的，那么将不会产生此信号
     - SIGINT:Ctrl+C
     - SIGKILL:杀死任一进程可靠的方法
-    - SIGPIPE:
+    - SIGPIPE:读写FIFO和PIPE时会用到
     - SIGQUIT:Ctrl+\；发送给前台进程组中所有进程，与SIGKILL相比，还会产生core文件
     - SIGSEGV:无效的内存引用(segmentation violation)
     - SIGSTOP:作业控制信号；与交互停止信号SIGTSTP相比，此信号不能忽略或捕获
     - SIGSYS:无效的系统调用
     - SIGTERM:kill(1)发送的默认系统终止信号，相比于SIGKILL，该信号是可以捕获的，可以使程序在退出前做好清理工作
-    - SIGTSTP:Ctrl+Z；交互停止信号(挂起)
+    - SIGTSTP:Ctrl+Z；交互停止信号(挂起);POSIX.1规定不能向进程发送该信号，具体实现一般是如果保持信号的默认配置(包括不更改信号处理函数)，则内核会丢弃该信号
     - SIGTTIN:后台进程组进程试图读控制终端，例外情况:读进程忽略或阻塞信号；读进程属于孤儿进程组，此时读操作返回出错
     - SIGTTOUT:后台进程组进程试图写控制终端，一些终端操作也能产生此信号，例外情况:允许后台进程写控制终端；写进程忽略或阻塞信号；谢金成属于孤儿进程组，此时写操作返回出错；
 - 函数signal
@@ -935,14 +936,14 @@ st\_ctim|inode状态的最后更改时间|chmod、chown|-c
         - 返回进程当前阻塞不能递送的信号
 - 函数sigaction:检查或修改与指定信号相关的动作
     - `int sigaction(int signo, const struct sigaction *restrict act, strct sigaction *restrict oact)`
-```
-struct sigaction{
-	void (*sa_handler)(int);	//信号处理函数
-	sigset_t sa_mask;	//在调用信号处理函数之前加入到信号屏蔽字中，仅当从信号处理函数返回时恢复原来的信号屏蔽字，系统默认会将当前信号加入到屏蔽字中
-	int sa_flag;		//指定对信号处理的选项，比如信号中断的系统调用重新启动SA_RESTART，默认是不重新启动
-	void (*sa_sigaction)(int, siginfo_t *, void *);	//替代的信号处理程序，如果sa_flag包含了SA_SIGINFO那么其替代sa_handler作为信号处理函数
-}
-```
+    ```
+    struct sigaction{
+    	void (*sa_handler)(int);	//信号处理函数
+    	sigset_t sa_mask;	//在调用信号处理函数之前加入到信号屏蔽字中，仅当从信号处理函数返回时恢复原来的信号屏蔽字，系统默认会将当前信号加入到屏蔽字中
+    	int sa_flag;		//指定对信号处理的选项，比如信号中断的系统调用重新启动SA_RESTART，默认是不重新启动
+    	void (*sa_sigaction)(int, siginfo_t *, void *);	//替代的信号处理程序，如果sa_flag包含了SA_SIGINFO那么其替代sa_handler作为信号处理函数
+    }
+    ```
     - 对一个信号设置了动作之后，与早期不可靠信号机制不同，此动作一直有效除非重新设置
     - 现在很多平台都是使用sigaction实现可靠的signal
     - 可以在调用sigaction时指定SA\_RESETHAND和SA\_NODEFER选项实现不可靠的signal函数
@@ -1533,7 +1534,7 @@ abort|pthread\_cancel|请求控制流的非正常退出
 		- 0:在指定时间内没有准备好的描述符，此时所有描述符集都会置0
 		- 正数:所有描述符集中已经准备好的描述符总数；如果同一个文件描述符在多个描述符集中出现，那么就会被计算多次；此时描述符集中仍然打开的位对应于准备好的描述符
 		    - “准备好”的含义
-		        - 对于readfds，read操作不会阻塞
+		        - 对于readfds，read操作不会阻塞,到达文件尾也意味着不会阻塞，因此当关闭socket时select也认为该文件描述符准备好了，但是read会返回0
 			- 对于writefds，write操作不会阻塞
 			- 对于异常exceptfds(条件集),有一个未决的异常条件；异常条件包括网络连接到达的带外数据等
 	                - 当一个文件描述符到达EOF时，select会认为该描述符是准备好的，然后调用read返回0
@@ -1981,7 +1982,7 @@ abort|pthread\_cancel|请求控制流的非正常退出
 
 # 第十六章 网络IPC:套接字
 - 套接字描述符
-        - 套接字(socket)是通信端点的抽象,也是文件的一种；正如文件通过文件描述符访问，套接字则通过套接字描述符访问
+    - 套接字(socket)是通信端点的抽象,也是文件的一种；正如文件通过文件描述符访问，套接字则通过套接字描述符访问
     - `int socket(int domain, int type, int protocol)`
         - 参数domain确定通信特性，POSIX.1规定的可选值为(AF表示Address Family)
 	    - `AF_INET`：IPv4因特网
@@ -2091,8 +2092,7 @@ abort|pthread\_cancel|请求控制流的非正常退出
 	- 如果用`SOCK_DGRAM`套接字调用connect，传送报文的目标地址会设置成connect指定的addr，这样每次传送报文时就不需要再提供地址，另外仅能接受来自该地址的报文
     - `int listen(int sockfd, int backlog)`
         - 服务器调用listen来宣告它愿意接受链接
-	- backlog指示系统该进程所要入队的未完成连接请求的数量，*但其实际值由系统决定*，上限由SOMAXCONN指定
-	- 一旦队列满，系统就会拒绝多余的连接请求
+	- backlog指示系统该进程所要排队连接请求的数量，*但其实际值由系统决定*，上限由SOMAXCONN指定
     - `int accept(int sockfd, struct sockaddr *restrict addr, socklen_t *restrict len)`
         - 函数返回的套接字描述符连接到调用connect的客户端，和原始套接字描述符(sockfd)具有相同的套接字类型和AF，但sockfd继续保持可用状态并接受其他连接
 	- addr存放客户端的地址，len保存实际的地址长度
@@ -2122,3 +2122,306 @@ abort|pthread\_cancel|请求控制流的非正常退出
         - 面向无连接的套接字不能保证数据包按序到达，如果一个数据包不能存放所有数据，那么就必须考虑顺序问题
 	- 面向无连接的套接字数据包可能会丢失
 	- 面向连接的套接字缺陷在于需要消耗更多的资源，更多的时间和工作来建立一个连接
+- 套接字选项
+    - 三类选项
+        - 通用选项，工作在所有套接字类型上
+	- 在套接字层次管理选项，但是依赖于下层协议的支持
+	- 特定于某协议的选项，每个协议独有
+    - `int setsockopt(int sockfd, int level, int option, const void *val, socklen_t len)`
+        - level指定了哪一类选项
+	    - `SOL_SOCKET`：通用选项
+	    - `IPPROTO_TCP`：TCP协议选项
+	    - `IPPROTO_IP`：IP协议选项
+	- option根据level的不同有不同取值 ，见图16\-21
+        - val根据option的不同指向一个数据结构或者一个整数
+	- len指定了val的大小
+    - `int getsockopt(int sockfd, int level, int option, void *restrict val, socklen_t *restrict lenp)`
+        - len指定val缓冲区的大小，函数会根据实际长度设置lenp指向的值，如果缓冲区太小会进行截断
+- 带外数据(out-of-band data)
+    - 带外数据比普通数据具有更高优先级，比普通数据先行传输，是一些通信协议支持的可选功能；TCP支持但是UDP不支持
+    - TCP仅支持一个字节的紧急数据，可以在send类函数中制定`MSG_OOB`标志，TCP会将发送数据的最后一个字节作为紧急数据
+    - 在紧急数据接收时，会发送SIGURG信号
+        - 通过fcntl的`F_SETOWN`命令设置信号的接受者，如果fcntl的第三个参数为正值指定的是进程ID，为负值指定的是进程组ID的绝对值
+    - `int sockatmark(int sockfd)`
+        - 当下一个要读取的直接在紧急标志处时，返回1
+    - 当出现带外数据时，select函数会返回一个文件描述符并且有一个待处理的异常条件
+    - 可以在recv函数中使用`MSG_OOB`标志在读取其他数据之前接收紧急数据
+    - 因为TCP只支持一个字节的带外数据，如果在接收当前紧急数据之前又有新的紧急数据到来，那么已有的字节会被丢弃
+- 非阻塞和异步I/O
+    - 通常recv函数没有数据可用时会阻塞；send函数在输出队列没有空间发送消息时也会阻塞
+    - 可以使用poll或select来判断非阻塞的套接字能否接收或者传输数据
+    - 基于套接字的异步I/O机制并没有标准化,具体实现的支持情况见图16\-23
+    - 启动异步I/O的步骤
+        - 建立套接字所有权，这样信号可以被传递到合适的进程
+	    - 在fcntl中使用`F_SETOWN`命令
+	    - 在ioctl中使用FIOSETOWN命令
+	    - 在ioctl中使用SIOCSPGRP命令
+	- 通知套接字当I/O操作不会阻塞时发送信号
+	    - 在fcntl中使用`F_SETFL`命令开启`O_ASYNC`标志
+	    - 在ioctl中使用FIOASYNC命令
+
+# 第十七章 高级进程间通信
+- UNIX域套接字
+    - UNIX域套接字用于同一台计算机上进程之间的通信，相比因特网套接字，UNIX域套接字仅仅复制数据，不执行协议相关的处理，效率更高
+    - 提供流和数据报接口，数据报服务是可靠的，既不会丢失报文也不会出错
+    - `int socketpair(int domain, int type, int protocol, int sockfd[2])`
+        - 创建无名UNIX域套接字
+	- domian只支持`AF_UNIX`
+	- sockfd是全双工管道，称其为`fd-pipe`
+    - 命名UNIX域套接字
+        - 无名UNIX域套接字不能在无关进程之间使用
+	- 命名UNIX域套接字地址结构为`struct sockaddr_un`, 当绑定一个地址时，系统会用该路径创建一个`S_IFSOCK`类型的文件
+	    - 该文件仅用于向客户进程告知套接字名字，该文件无法打开，也不能由应用程序用于通信
+	    - 绑定同一个地址时，该文件已经存在，bind请求失败
+	    - 关闭套接字时，不会自动删除该文件，所以必须确保在应用程序退出前，对该文件执行解除链接操作
+    - 唯一连接
+        - 服务器进程使用标准的bind、listen、accept为客户进程安排一个唯一的UNIX域连接
+	- 如果不为UNIX域套接字显式绑定名字，内核会代表我们隐式绑定一个地址且不会在文件系统创建文件来表示这个套接字
+    - 传送文件描述符
+        - 传送文件描述符，从技术上讲，是将指向一个打开文件表项的指针从一个进程发送到另一个进程，该指针被分配在接收进程的第一个可用描述符中，与fork之后父子进程共享打开文件表的情况相同
+	- 当发送进程将文件描述符传送给接收进程后，通常会关闭该描述符，但是这并不会真的导致关闭文件，即使接收进程还没有接收到文件描述符
+	- 使用sendmsg和recvmsg函数，将文件描述符存放在控制信息头中
+	    - 主要涉及`struct msghdr`中的成员`msg_control`,该成员类型为`struct cmsghdr`
+	    ```
+	    struct cmsghdr{
+	    	socklen_t cmsg_len;	//通过宏CMSG_LEN获得，包括整个cmssghdr的大小以及其后的数据
+		int msg_level;		//消息的层次，参考上一章的套接字选项
+		int cmsg_type;		//SCM_RIGHT用于传递文件描述符;SCM_CREDENTIALS用于传递证书
+		/*followed by the actual control message data*/
+	    };
+	    ```
+- open服务器进程第一版
+    - 将服务器进程设计成一个单独的可执行程序有很多优点
+        - 任何客户进程都很容易地与服务器进程联系，没有将特定的服务硬编码在应用程序中，而是设计了一种可供重用的设施
+	- 如果需要更改服务器进程，只影响到一个程序，类似共享库函数的优点
+	- 服务器进程可以是一个设置用户ID的程序，使客户进程没有附加权限
+- open服务器进程第二版
+    - `int getopt(int argc, char *const argv[], const char *options)`
+        - 该函数帮助命令开发者以一致的方式处理命令行选项
+        - argc和argv与传入main函数的一致
+	- options包含该命令支持的选项字符的字符串
+	- 与该函数相关的变量有optind、opterr、optopt和optarg
+
+# 第十八章 终端I/O
+- 综述
+    - 终端I/O由两种不同的工作模式
+        - 规范模式输入处理：对终端输入以行为单位进行处理，对于每个读请求，终端驱动程序最多返回一行；默认模式
+        - 非规范模式输入处理：输入字符不装配成行
+    - 终端设备是由通常位于内核中的终端驱动程序控制的，每个终端设备都有一个输入队列和输出队列
+        - 如果打开了回显功能，则在输入队列和输出队列之间有一个隐含的连接
+        - 输入队列的长度`MAX_INPUT`是有限值，当一个特定设备的输入队列填满时，系统的行为将依赖于实现
+        - `MAX_CANON`限制是一个规范输入行的最大字节数
+        - 虽然输出队列的长度通常也是有限的，但是程序并不能获得这个定义其长度的变量，因为当输出队列即将填满时，内核直接使写进程休眠直到写队列有可用的空间
+        - 可以使用tcflush函数冲洗输入或输出队列
+    - 终端行规程(terminal line discipline):位于内核通用读、写函数和实际设备驱动程序之间，使得所有终端驱动程序能够一致地支持规范处理
+    - 所有可以检测和更改的终端设备特性都包含在termios结构中
+    ```
+    struct termios{
+    	tcflag_t c_iflag;	//输入标志通过终端设备驱动程序控制字符的输入，例如剥除输入字节的第8位
+    	tcflag_t c_oflag;	//输出标志控制驱动程序的输出，例如将换行符转换为CR/LF
+    	tcflag_t c_cflag;	//控制标志影响RS-232串行线，例如每个字符的一个或两个停止位
+    	tcfalg_t c_lflag;	//本地标志影响驱动程序和用户之间的接口，例如回显打开和关闭
+    	cc_t c_cc[NCCS];	//包含了所有可以更改的特殊字符
+    };
+    ```
+    - 为了对参数进行类型检查，SUS没有使用经典的ioctl函数控制终端设备，而是使用了图18\-7的13个函数
+- 特殊输入字符
+    - 在POSIX.1定义的11个特殊输入字符中有9个可以更改，除了换行符和回车符
+    - 在特殊的输入字符中，有两个字符STOP和START在输出时也要进行特殊处理
+    - 除了换行符(NL,EOL,EOL2)和回车符(CR),特殊输入字符在被终端驱动程序识别并进行特殊处理后会被丢弃，并不会返回给读终端的进程
+    - 这些特殊输入字符在ASCII码中大多有定义，使用键盘可以输入特定的ASCII值，详见[ASCII说明](https://academic.evergreen.edu/projects/biophysics/technotes/program/ascii_ctrl.htm#index)
+- 获得和设置终端属性
+    - `int tcgetattr(int fd, struct termios *termptr)`
+    - `int tcsetattr(int fd, int opt, const struct termios *termptr)`
+        - 如果fd引用的不是终端设备，函数会出错返回，可以通过isatty函数查看
+	- opt指定在什么时候新的终端属性起作用
+	    - TCSANOW：更改立即发生
+	    - TCSADRAIN：发送所有输出后更改才发生，如果更改输出参数应使用此选项
+	    - TCSAFLUSH：发送所有输出后更改才发生，更进一步，如果更改发生时未读的所有输入数据都被丢弃(冲洗)
+	- tcsetattr即使未能执行所有要求的动作它也成功返回，因此在设置完属性后要调用tcgetattr查看是否所有属性正确设置了
+- 终端选项标志
+    -详见课本P555\-P560
+- stty命令
+    - 在命令行中使用此命令查看终端的配置
+    - 如果选项名前有一个连字符\-，表示该选项禁用
+    - stty命令使用它的标准输入获得和设置终端的选项标志，因此可以使用重定向标准输入的方式设置指定的终端设备
+- 波特率函数
+    - 波特率是一个历史沿用的术语，现在它指的是bit per second，虽然大多数终端设备对输入和输出使用相同的波特率，但是只要硬件允许，可以将它们设置为不同的值
+    - `speed_t cfgetispeed(const struct termios *termptr)`
+    - `speed_t cfgetospeed(const struct termios *termptr)`
+        - 注意在使用这两个get函数时要先调用tcgetattr获得终端设备的选项
+    - `int cfsetispeed(struct termios *termptr, speed_t speed)`
+    - `int cfsetospeed(struct termios *termptr, speed_t speed)`
+        - 在调用完这两个函数后要使用tcsetattr函数才能真正设置终端设备的选项
+    - `speed_t`类型的取值为B0、B50等等，实现为宏因此与具体平台无关
+- 行控制函数
+    - `int tcdrain(int fd)`
+        - 等待所有的输出都被传递
+    - `int tcflow(int fd, int action)`
+        - 根据action取值控制输入和输出流
+	    - TCOOFF：挂起输出
+	    - TCOON：重新启动挂起的输出
+	    - TCIOFF：发送STOP字符，使终端设备停止发送数据
+	    - TCION：发送START字符，使终端设备恢复发送数据
+    - `int tcflush(int fd, int queue)`
+        - 根据queue冲洗(丢弃)相应的缓冲区
+	    - TCIFLUSH：冲洗输入队列
+	    - TCOFLUSH：冲洗输出队列
+	    - TCIOFLUSH：冲洗输入输出队列
+    - `int tcsendbreak(int fd, int duration)`
+        - 在duration指定的时间区间内发送0值位流，具体对应的时间与实现有关
+- 终端标识
+    - `char *ctermid(char *ptr)`
+        - 如果ptr非空，则指向长度至少为`L_ctermid`(定义在stdio.h中)字节的数组；如果ptr为空，函数为该指针分配静态存储空间
+    - `int siatty(int fd)`
+        - 如果fd引用的是一个终端设备，那么该函数返回真
+    - `char *ttyname(int fd)`
+        - 返回在该文件描述符上打开的终端设备的路径名
+- 规范模式
+    - 以下条件造成读返回
+        - 所请求的字节数已读到，无需读一个完整行即返回，下次继续读不会丢失数据
+	- 当读到一个行定界符时，读返回；行定界符包括NL、EOL、EOL2、EOF、CR(设置ICRNL未设置IGNCR)，只有EOF不会返回给调用者
+	- 如果捕捉到信号，并且该函数不再自动启动
+- 非规范模式
+    - 通过关闭termios结构中的`c_lflag`的ICANON标志来指定非规范模式
+    - 在非规范模式中，输入不装配成行，不处理某些特殊字符
+    - 使用termios结构中`c_cc`数组中的MIN和TIME决定read什么时候返回,详细见图18\-19
+        - MIN>0, TIME>0
+	    - *TIME是从接收到第一个字符时开始计时*，在超时之前至少接收到MIN个字节或者超时返回
+	    - 调用者可能会无限期阻塞
+	- MIN>0, TIME==0
+	    - 在至少接收到MIN个字节之前read不会返回
+	    - 调用者可能会无限期阻塞
+	- MIN==0, TIME>0
+	    - *TIME是read调用时开始计时*，在至少接收到一个字节或者超时返回
+	- MIN==0, TIME==0
+	    - *非阻塞*，如果数据可用，read最多返回所请求的字节数；如果无数据可用，read返回0
+	- 在所有情况中，MIN只是指定可以返回的最小值，如果数据可用，read可能返回所要求的字节数
+    - cbreak模式
+        - 非规范模式，这种模式关闭了对某些输入字符的处理(非规范模式)，但是没有关闭对信号的处理，调用者应当捕捉这些信号，否则信号可能终止程序，并且使终端保持cbreak模式
+	- 关闭回显
+	- 每次输入一个字节，因此将MIN设置为1，TIME设置为0
+    - raw模式
+        - 非规范模式，关闭了信号的产生字符ISIG和扩充输入字符IEXTEN处理，禁用BRKINT字符，使BREAK字符不再产生信号
+	- 关闭回显
+	- 禁止ICRNL，输入奇偶校验INPCK，剥离输入字节的第8位ISTRIP，输出流控制IXON
+	- CS8，禁用奇偶校验PARENB
+	- 禁止所有输出处理OPOST
+	- 每次输入一个字节MIN=1，TIME=0
+- 终端窗口大小
+    - 内核为每个终端和伪终端都维护了一个struct winsize
+        - 用ioctl的TIOCGWINSZ命令可以获取此结构
+	- 用ioctl的TIOCSWINSZ命令可以设置此结构，如果设置值与内核中的值不同，那么前台进程组会收到SIGWINCH信号(此信号默认是忽略的)
+	- 除了以上动作，内核不做其他工作，由应用程序解释处理该结构
+- termcap,terminfo和curses
+    - termcap即terminal capability，涉及到终端的说明文件和一套相关的例程，最初是为了支持vi编辑器
+    - 将例程抽取出来形成函数库curses
+    - 因为终端种类越来越多，为了克服termcap的缺点开发了terminfo
+
+# 第十九章 伪终端
+- 伪终端是指对于一个应用程序而言，它看上去像是一个终端，但实际上并不是一个真正的终端
+- 如何使用伪终端
+    - 一个进程打开伪终端主设备，然后fork子进程，子进程创建一个新的会话，打开一个相应的伪终端从设备，将该文件描述符作为标准输入、标准输出和标准错误，然后调用exec；伪终端从设备成为子进程的控制终端
+    - 对于伪终端从设备的用户进程，可以使用终端I/O函数操作标准输入、标准输出和标准错误，但是伪终端从设备不是真正的终端设备，因此某些函数将被忽略
+    - 伪终端主设备和从设备之间类似双向管道，任何写到主设备的都会作为从设备的输出，反之亦然；但是从设备上的终端行规程使我们拥有普通管道没有的处理能力
+- 伪终端的典型用途
+    - 网络登录服务器(见图19\-3)
+        - 典型的例子是telnetd和rlogind服务器
+    - 窗口系统终端模拟(见图19\-4)
+        - 终端模拟器作为窗口管理器和shell之间的媒介
+        - 窗口系统提供终端模拟器，终端模拟器打开伪终端主设备，shell将标准输入、标准输出和标准错误连接到伪终端从设备
+	- 当用户改变终端模拟器窗口的大小时，窗口管理器会通知终端模拟器，终端模拟器使用ioctl设置从设备的窗口大小。如果新窗口的大小和当前不同，内核会发送一个SIGWINCH信号给前台从设备的进程组，应用程序根据需要处理
+    - script程序(见图19\-5)
+        - 该程序将终端会话期间所有的输入和输出信息复制到一个文件中
+    - expect程序
+        - 在非交互式模式中驱动交互式程序
+    - 运行协同进程
+        - 使用标准I/O通过管道和协同进程通信时，会遇到全缓冲问题
+	- 如果源程序的代码不可更改，那么通过伪终端和协同进程通信，就像使用终端设备一样，使用的是行缓冲
+    - 观看长时间运行程序的输出
+        - 如果将程序的输出重定向到文件，标准I/O函数进行全缓冲，那么只有到达一定的字节才会写入文件
+	- 如果源程序的代码不可更改，那么将程序的输出通过伪终端程序再重定向到文件可以解决全缓冲问题
+- 打开伪终端设备
+    - SUS规定第一次打开伪终端设备时需要进行初始化，因此不需要指定`O_TTY_INIT`
+    - `int posix_openpt(int oflag)`
+        - 打开下一个可用的伪终端主设备
+	- oflag只能取`O_RDWR`和`O_NOTTY`
+    - `int grantpt(int fd)`
+        - 函数将伪终端主设备fd对应的伪终端从设备的用户ID设置为调用者的实际用户ID，实现通常将组所有者设置为tty组，权限设置为0620(对所有者读写，对同组用户写)
+	- 如果调用者捕捉SIGCHLD信号，那么该函数的行为是未定义的
+    - `int unlockpt(int fd)`
+        - 允许应用程序对伪终端主设备fd对应的伪终端从设备的访问
+	- 建立设备的应用程序应该在正确初始化主从设备后才调用此函数
+    - `char *ptsname(int fd)`
+        - 返回伪终端主设备fd对应的从设备路径名
+- 函数`pty_fork`
+- pty程序
+- 使用pty程序
+    - utmp文件
+        - 通过telnetd和rlogind远程登录的用户在utmp中记录
+	- 通过窗口系统或script类程序使用伪终端时是否在utmp中记录看系统实现，如果记录，那么可以通过who命名查看伪终端的使用情况
+    - 作业控制交互
+        - pty运行的孤儿进程组不能处理作业控制信号
+    - 检查长时间运行程序的输出
+    - script程序
+    - 运行协同进程
+    - 非交互地驱动交互程序
+- 高级特性
+    - 打包模式;当PTY从设备上出现某些事件时，通知主设备接收数据;使用ioctl的TIOCPKT命令设置
+    - 远程模式;通知PTY从设备上的行规程模块对从主设备接收到的任何数据都不进行处理；使用ioctl的TIOCREMOTE命令设置
+    - 窗口大小变化；使用ioctl的TIOCSWINSZ命令设置
+    - 信号发生；使用ioctl的TIOCSIG命令向PTY从设备进程组发送信号
+
+# 第二十章 数据库函数库
+- 函数库
+    - `DBHANDLE db_open(const char *pathname, int oflag, .../*int mode*/)`
+        - 返回值为数据库句柄，是不透明的对象
+	- oflag和mode的使用类似open
+	- 函数将创建索引文件pathname.idx和数据文件pathname.dat
+    - `void db_close(SBHANDLE db)`
+        - 关闭idx和dat文件并释放内部缓冲区
+    - `int db_store(DBHANDLE db, const char *key, const char *data, int flag)`
+        - flag只能是`DB_INSERT`,`DB_REPLACE`,`DB_STORE`
+    - `char *db_fetch(DBHANDLE db, const char *key)`
+        - 根据key查找记录
+    - `int db_delete(DBHANDLE db, const char *key)`
+         - 删除key的记录
+    - `void db_rewind(DBHANDLE db)`
+    - `char * db_nextrec(DBHANDLE db, char *key)`
+         - 这两个函数用于遍历数据库
+- 实现概述
+    - 常用的数据库索引技术有散列表和B+树，本章采用的是定长散列表，使用链表法解决冲突
+    - 动态散列表的优点是能够使用两次磁盘存取就找到记录；B树能够按键的顺序来遍历数据库
+    - 键和索引的内容使用字符串，虽然比存储二进制数据占用更多的空间，但是提高了可移植性
+- 集中式或非集中式
+    - 集中式数据库的特点是由一个进程作为数据库的管理者，所有数据库访问工作都由此进程完成，其他进程通过IPC机制与此中心进程联系
+    - 非集中式数据库每个进程使用并发控制发起自己的I/O请求
+    - 对比
+        - 如果有适当的加锁机制避免了IPC(因为需要复制两次数据，共享存储除外)，那么非集中式数据库的效率更高
+	- 集中式的优点是能够根据需要对操作模式进行调整，比如可以安排各个进程I/O的优先级；非集中式只能够依靠内核磁盘I/O调度策略和加锁策略，无法确定哪个进程将获得锁
+	- 集中式数据库的恢复相对简单，因为所有的状态信息都存放在一处
+    - 本章采用的是非集中式数据库
+- 并发
+    - 粗粒度锁限制了并发
+    - 细粒度锁提供了更高的并发性
+- 构造函数库
+- 源代码
+    - 在读写二进制文件时要小心，比如在64位平台写入long类型在32位平台上就读取错误了，还要注意大小端问题
+- 性能
+
+#第二十一章 与网络打印机通信
+- 网络打印协议(IPP)
+    - IPP协议建立在HTTP协议之上，HTTP协议又建立在TCP/IP之上
+    - IPP是请求响应协议：客户端发送请求到服务器，服务器用响应报文回答这个请求
+    - 在首部，整数以有符号二进制补码以及大端字节序存储
+- 超文本传输协议HTTP
+    - HTTP首部是ASCII码，每行以回车和换行结束，由三个部分组成
+        - 开始行
+	    - 对于请求，包含method指示客户端请求的操作(对于IPP为POST)、统一资源定位符、HTTP版本
+	    - 对于响应，包含版本字符串、数字状态码和状态信息
+	- 首部行：指定属性，每个属性一行，属性名和属性值以冒号分隔，中间可选空格
+	- 空白行
+    - 可选的实体主体，我们应该包含IPP首部和数据
+- 打印假脱机技术
+    - 假脱机守护进程将要打印的文件保存到磁盘，将请求送入队列，最终将文件发送到打印机
+- 源代码
